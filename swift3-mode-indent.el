@@ -158,10 +158,9 @@
      ((and next-is-on-same-line (memq next-type '(\) \])))
       (goto-char (swift-mode:token:end next-token))
       (backward-list)
-      (swift-mode:calculate-indent-of-expression-after-open-paren
+      (swift-mode:calculate-indent-of-expression
        swift-mode:expression-parent-tokens
        0
-       nil
        ;; Stops scanning at BOL:
        ;;
        ;; foo
@@ -287,9 +286,7 @@
              swift-mode:statement-parent-tokens
              swift-mode:switch-case-offset)
           ;; Other cases. Aligns with the previous case.
-          (swift-mode:goto-non-comment-bol)
-          (swift-mode:skip-whitespaces)
-          (current-column))))
+          (swift-mode:align-with-current-line))))
 
      ;; Before "where" on the same line
      ((and next-is-on-same-line (equal next-text "where"))
@@ -345,10 +342,9 @@
      ;; After ( or [
      ((memq previous-type '(\( \[))
       (goto-char (swift-mode:token:start previous-token))
-      (swift-mode:calculate-indent-of-expression-after-open-paren
+      (swift-mode:calculate-indent-of-expression
        swift-mode:expression-parent-tokens
        swift-mode:parenthesized-expression-offset
-       nil
        ;; Stops scanning at BOL:
        ;;
        ;; foo
@@ -363,6 +359,7 @@
        ;;   1
        ;; )
        'any
+       nil
        swift-mode:parenthesized-expression-offset))
 
      ;; After "where"
@@ -431,14 +428,18 @@
       ;;     ABC {
       ;; }
       (goto-char (swift-mode:token:start previous-token))
-      (let ((parent (save-excursion (swift-mode:backward-sexps-until
-                                     (append swift-mode:statement-parent-tokens
-                                             '("case"))))))
-        (swift-mode:calculate-indent-of-expression-after-open-paren
-         (append swift-mode:statement-parent-tokens
-                 '(< "case" "catch" "for")
-                 (if (equal (swift-mode:token:text parent) "case") '(\,) '()))
-         swift-mode:multiline-statement-offset)))
+      (if (swift-mode:bol-other-than-comments-p)
+          (swift-mode:align-with-current-line
+           swift-mode:multiline-statement-offset)
+        (let ((parent (save-excursion
+                        (swift-mode:backward-sexps-until
+                         (append swift-mode:statement-parent-tokens
+                                 '("case"))))))
+          (swift-mode:calculate-indent-of-expression
+           (append swift-mode:statement-parent-tokens
+                   '(< "case" "catch" "for")
+                   (if (equal (swift-mode:token:text parent) "case") '(\,) '()))
+           swift-mode:multiline-statement-offset))))
 
      ;; After implicit-\; or ;
      ((memq previous-type '(implicit-\; \;))
@@ -478,11 +479,9 @@
       ;;   foo
       (goto-char (swift-mode:token:start previous-token))
       (if (swift-mode:bol-other-than-comments-p)
-          (swift-mode:goto-non-comment-bol)
+          (swift-mode:align-with-current-line)
         (let ((parent (swift-mode:backward-sexps-until '("for" {))))
-          (goto-char (swift-mode:token:end parent))))
-      (swift-mode:skip-whitespaces)
-      (current-column))
+          (swift-mode:align-with-next-token parent))))
 
      ;; After case ... : or default:
      ((eq previous-type 'case-:)
@@ -512,37 +511,6 @@
        swift-mode:expression-parent-tokens
        swift-mode:multiline-statement-offset
        'any)))))
-
-(defun swift-mode:calculate-indent-of-expression-after-open-paren
-    (parents
-     &optional
-     offset
-     stop-at-eol-token-types
-     stop-at-bol-token-types
-     bol-offset)
-  ;; Changes indentation if the open bracket is at the beginning of the line:
-  ;;
-  ;; let x = [
-  ;;   1
-  ;; ]
-  ;;
-  ;; let x =
-  ;;   [
-  ;;     1
-  ;;   ]
-  ;;
-  ;; Assuming the cursor is on the open parenthesis.
-  (if (swift-mode:bol-other-than-comments-p)
-      (progn
-        (swift-mode:goto-non-comment-bol)
-        (swift-mode:skip-whitespaces)
-        (+ (or offset 0) (current-column)))
-    (swift-mode:calculate-indent-of-expression
-     parents
-     offset
-     stop-at-eol-token-types
-     stop-at-bol-token-types
-     bol-offset)))
 
 (defun swift-mode:calculate-indent-of-expression
     (parents
@@ -591,17 +559,10 @@ on the previous line."
       (if stopped-at-parent
           ;; The cursor is at the start of the entire expression.
           ;; Aligns with the start of the expression with offset.
-          (progn
-            (swift-mode:goto-non-comment-bol)
-            (when (< (point) parent-end)
-              (goto-char parent-end))
-            (swift-mode:skip-whitespaces)
-            (+ (or offset 0) (current-column)))
+          (swift-mode:align-with-next-token parent offset)
         ;; The cursor is at the middle of the expression.
         ;; Aligns with this line with bol-offset.
-        (swift-mode:goto-non-comment-bol)
-        (swift-mode:skip-whitespaces)
-        (+ (or bol-offset 0) (current-column))))))
+        (swift-mode:align-with-current-line bol-offset)))))
 
 (defun swift-mode:calculate-indent-after-open-curly-brace (offset)
   "Return indentation after open curly braces.
@@ -731,16 +692,14 @@ This function is also used for close-curly-brace."
 
            (t
             (setq next-token (swift-mode:forward-token-or-list)))))))
-    (swift-mode:calculate-indent-of-expression-after-open-paren
+    (swift-mode:calculate-indent-of-expression
      swift-mode:statement-parent-tokens
      offset
      (if is-declaration-or-control-statement-body nil 'any)
      nil
      offset)))
 
-(defun swift-mode:calculate-indent-of-prefix-comma (&optional
-                                                    parents
-                                                    self-type)
+(defun swift-mode:calculate-indent-of-prefix-comma ()
   "Return indentation for prefix comma.
 
 Example:
@@ -764,18 +723,16 @@ var x = 1
   , z = 3
 
 This is also known as Utrecht-style in the Haskell community."
-  (setq self-type (or self-type '\,))
-
   (let* ((comma-type-and-statement-parent (swift-mode:detect-type-of-comma))
          (comma-type (nth 0 comma-type-and-statement-parent))
          (statement-parent (nth 1 comma-type-and-statement-parent)))
     (if (eq comma-type 'condition-list)
         (swift-mode:calculate-indent-of-prefix-comma-of-condition-list
          statement-parent)
-      (setq parents (swift-mode:parents-of-comma comma-type))
-      (let* ((parent (swift-mode:backward-sexps-until parents
+      (let* ((parents (swift-mode:parents-of-comma comma-type))
+             (parent (swift-mode:backward-sexps-until parents
                                                       nil
-                                                      (list self-type)))
+                                                      '(\,)))
              (parent-end (swift-mode:token:end parent))
              (stopped-at-parent
               (or (memq (swift-mode:token:type parent) parents)
@@ -788,10 +745,7 @@ This is also known as Utrecht-style in the Haskell community."
               (backward-char)
               (current-column))
           ;; Aligns with the previous comma.
-          ;; The cursor is at the first token of the line.
-          (swift-mode:goto-non-comment-bol)
-          (swift-mode:skip-whitespaces)
-          (current-column))))))
+          (swift-mode:align-with-current-line))))))
 
 (defun swift-mode:calculate-indent-of-prefix-comma-of-condition-list
     (statement-parent)
@@ -833,41 +787,26 @@ This is also known as Utrecht-style in the Haskell community."
       (setq next-token (swift-mode:forward-token-or-list)))
     (if (eq (swift-mode:token:type anchor) '\,)
         ;; Aligns with the previous comma.
-        (progn
-          (swift-mode:goto-non-comment-bol)
-          (swift-mode:skip-whitespaces)
-          (current-column))
+        (swift-mode:align-with-current-line)
       ;; Aligns with the end of the anchor
       (goto-char (swift-mode:token:end anchor))
       (backward-char)
       (current-column))))
 
-(defun swift-mode:calculate-indent-after-comma (&optional
-                                                parents
-                                                self-type)
+(defun swift-mode:calculate-indent-after-comma ()
   "Return indentation after comma.
 
 Assuming the cursor is on the comma."
-  (setq self-type (or self-type '\,))
-
   (let* ((comma-type-and-statement-parent (swift-mode:detect-type-of-comma))
          (comma-type (nth 0 comma-type-and-statement-parent))
          (statement-parent (nth 1 comma-type-and-statement-parent)))
     (if (eq comma-type 'condition-list)
         (swift-mode:calculate-indent-after-comma-of-condition-list
          statement-parent)
-      (setq parents (swift-mode:parents-of-comma comma-type))
-      (let* ((parent (swift-mode:backward-sexps-until parents (list self-type)))
-             (parent-end (swift-mode:token:end parent)))
-        (goto-char parent-end)
-        (forward-comment (point-max))
-        ;; Aligns with the previous element.
-        ;; The cursor is at the first token of the element.
-        (swift-mode:goto-non-comment-bol)
-        (when (< (point) parent-end)
-          (goto-char parent-end))
-        (swift-mode:skip-whitespaces)
-        (current-column)))))
+      (swift-mode:align-with-next-token
+       (swift-mode:backward-sexps-until
+        (swift-mode:parents-of-comma comma-type)
+        '(\,))))))
 
 (defun swift-mode:calculate-indent-after-comma-of-condition-list
     (statement-parent)
@@ -887,7 +826,6 @@ Assuming the cursor is on the comma."
   (let ((pos (point))
         next-token
         (parent statement-parent)
-        (parent-end (swift-mode:token:end statement-parent))
         in-case-pattern-list)
     (goto-char (swift-mode:token:end statement-parent))
     (setq next-token (swift-mode:forward-token-or-list))
@@ -900,24 +838,14 @@ Assuming the cursor is on the comma."
         (setq in-case-pattern-list nil))
 
        ((member (swift-mode:token:text next-token) '("if" "guard" "while"))
-        (setq parent next-token)
-        (setq parent-end (swift-mode:token:end parent)))
+        (setq parent next-token))
 
        ((and (not in-case-pattern-list)
              (eq (swift-mode:token:type next-token) '\,)
              (swift-mode:eol-other-than-comments-p))
-        (setq parent next-token)
-        (setq parent-end (swift-mode:token:end parent))))
+        (setq parent next-token)))
       (setq next-token (swift-mode:forward-token-or-list)))
-    (goto-char parent-end)
-    (forward-comment (point-max))
-    ;; Aligns with the previous element.
-    ;; The cursor is at the first token of the element.
-    (swift-mode:goto-non-comment-bol)
-    (when (< (point) parent-end)
-      (goto-char parent-end))
-    (swift-mode:skip-whitespaces)
-    (current-column)))
+    (swift-mode:align-with-next-token parent)))
 
 (defun swift-mode:detect-type-of-comma ()
   "Return type of comma token under the cursor.
@@ -1186,6 +1114,21 @@ is the symbol `any', it matches all tokens."
       (setq type (swift-mode:token:type parent))
       (setq text (swift-mode:token:text parent)))
     parent))
+
+(defun swift-mode:align-with-next-token (parent &optional offset)
+  (let ((parent-end (swift-mode:token:end parent)))
+    (goto-char parent-end)
+    (forward-comment (point-max))
+    (swift-mode:goto-non-comment-bol)
+    (when (< (point) parent-end)
+      (goto-char parent-end))
+    (swift-mode:skip-whitespaces)
+    (+ (or offset 0) (current-column))))
+
+(defun swift-mode:align-with-current-line (&optional offset)
+  (swift-mode:goto-non-comment-bol)
+  (swift-mode:skip-whitespaces)
+  (+ (or offset 0) (current-column)))
 
 (defun swift-mode:backward-token-or-list ()
  "Move point to the start position of the previous token or list.
