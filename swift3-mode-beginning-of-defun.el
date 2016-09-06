@@ -32,7 +32,7 @@
 (require 'swift3-mode-lexer)
 (require 'swift3-mode-indent)
 
-(defun swift-mode:beginning-of-defun (&optional arg)
+(defun swift3-mode:beginning-of-defun (&optional arg)
   "Move backward to the beginning of a defun."
   (interactive)
   (setq arg (or arg 1))
@@ -40,38 +40,38 @@
         pos)
     (if (<= 0 arg)
         (while (< 0 arg)
-          (setq result (swift-mode:beginning-of-defun-1
-                        #'swift-mode:backward-token-or-list))
+          (setq result (swift3-mode:beginning-of-defun-1
+                        #'swift3-mode:backward-token-or-list))
           (setq arg (1- arg)))
       (while (< arg 0)
         (setq pos (point))
 
-        (swift-mode:beginning-of-statement)
+        (swift3-mode:beginning-of-statement)
 
         (when (<= (point) pos)
           (while (not
                   (memq
-                   (swift-mode:token:type (swift-mode:forward-token-or-list))
+                   (swift3-mode:token:type (swift3-mode:forward-token-or-list))
                    '({} outside-of-buffer)))))
 
-        (setq result (swift-mode:beginning-of-defun-1
+        (setq result (swift3-mode:beginning-of-defun-1
                       (lambda ()
-                        (prog1 (swift-mode:forward-token-or-list)
+                        (prog1 (swift3-mode:forward-token-or-list)
                           (forward-comment (point-max))))))
         (setq arg (1+ arg))))
     result))
 
-(defun swift-mode:beginning-of-defun-1 (next-token-function)
-  (catch 'swift-mode:found-defun
-    (while (not (eq (swift-mode:token:type (funcall next-token-function))
+(defun swift3-mode:beginning-of-defun-1 (next-token-function)
+  (catch 'swift3-mode:found-defun
+    (while (not (eq (swift3-mode:token:type (funcall next-token-function))
                     'outside-of-buffer))
-      (when (save-excursion (swift-mode:is-point-before-body-of-defun))
-        (swift-mode:beginning-of-statement)
-        (throw 'swift-mode:found-defun t)))
+      (when (save-excursion (swift3-mode:is-point-before-body-of-defun))
+        (swift3-mode:beginning-of-statement)
+        (throw 'swift3-mode:found-defun t)))
     nil))
 
 
-(defun swift-mode:is-point-before-body-of-defun ()
+(defun swift3-mode:is-point-before-body-of-defun ()
   (and
    (= (char-after) ?{)
    (progn
@@ -80,70 +80,70 @@
      (let* ((defun-keywords '("class" "struct" "protocol" "enum" "extension"
                               "func" "operator" "var" "get" "set" "willSet"
                               "didSet" "deinit" "subscript"))
-            (previous-token (swift-mode:backward-token-or-list))
-            (previous-type (swift-mode:token:type previous-token))
-            (previous-text (swift-mode:token:text previous-token)))
+            (previous-token (swift3-mode:backward-token-or-list))
+            (previous-type (swift3-mode:token:type previous-token))
+            (previous-text (swift3-mode:token:text previous-token)))
        (while (and
                (not (eq previous-type 'outside-of-buffer))
-               (not (memq previous-type swift-mode:statement-parent-tokens))
-               (not (member previous-text swift-mode:statement-parent-tokens))
+               (not (memq previous-type swift3-mode:statement-parent-tokens))
+               (not (member previous-text swift3-mode:statement-parent-tokens))
                (not (member previous-text defun-keywords))
                (not (and (equal previous-text "init")
                          (save-excursion
                            ;; Excludes self.init() {}
                            (not
                             (equal
-                             (swift-mode:token:text (swift-mode:backward-token))
+                             (swift3-mode:token:text (swift3-mode:backward-token))
                              "."))))))
-         (setq previous-token (swift-mode:backward-token-or-list))
-         (setq previous-type (swift-mode:token:type previous-token))
-         (setq previous-text (swift-mode:token:text previous-token)))
+         (setq previous-token (swift3-mode:backward-token-or-list))
+         (setq previous-type (swift3-mode:token:type previous-token))
+         (setq previous-text (swift3-mode:token:text previous-token)))
        (unless (bobp)
-         (swift-mode:forward-token-simple))
+         (swift3-mode:forward-token-simple))
        (or (equal previous-text "init")
            (member previous-text defun-keywords))))))
 
-(defun swift-mode:beginning-of-statement ()
+(defun swift3-mode:beginning-of-statement ()
   "Move backward to the beginning of a statement or some kind of expression.
 
 Intended for internal use."
-  (let ((parent (swift-mode:backward-sexps-until
-                 swift-mode:statement-parent-tokens)))
+  (let ((parent (swift3-mode:backward-sexps-until
+                 swift3-mode:statement-parent-tokens)))
     (forward-comment (point-max))
-    (swift-mode:goto-non-comment-bol)
-    (when (< (point) (swift-mode:token:end parent))
-      (goto-char (swift-mode:token:end parent)))
-    (swift-mode:skip-whitespaces)))
+    (swift3-mode:goto-non-comment-bol)
+    (when (< (point) (swift3-mode:token:end parent))
+      (goto-char (swift3-mode:token:end parent)))
+    (swift3-mode:skip-whitespaces)))
 
 
-(defun swift-mode:end-of-defun (&optional arg)
+(defun swift3-mode:end-of-defun (&optional arg)
   "Move forward to the end of a defun."
   (interactive)
   (setq arg (or arg 1))
   (let (result)
     (if (<= 0 arg)
         (while (< 0 arg)
-          (setq result (swift-mode:end-of-defun-1
-                        #'swift-mode:forward-token-or-list
+          (setq result (swift3-mode:end-of-defun-1
+                        #'swift3-mode:forward-token-or-list
                         ))
           (setq arg (1- arg)))
       (while (< arg 0)
-        (setq result (swift-mode:end-of-defun-1
+        (setq result (swift3-mode:end-of-defun-1
                       (lambda ()
-                        (prog1 (swift-mode:backward-token-or-list)
+                        (prog1 (swift3-mode:backward-token-or-list)
                           (forward-comment (- (point)))))))
         (setq arg (1+ arg))))
     result))
 
-(defun swift-mode:end-of-defun-1 (next-token-function)
-  (catch 'swift-mode:found-defun
-    (while (not (eq (swift-mode:token:type (funcall next-token-function))
+(defun swift3-mode:end-of-defun-1 (next-token-function)
+  (catch 'swift3-mode:found-defun
+    (while (not (eq (swift3-mode:token:type (funcall next-token-function))
                     'outside-of-buffer))
       (when (and (= (char-before) ?})
                  (save-excursion
                    (backward-list)
-                   (swift-mode:is-point-before-body-of-defun)))
-        (throw 'swift-mode:found-defun t)))
+                   (swift3-mode:is-point-before-body-of-defun)))
+        (throw 'swift3-mode:found-defun t)))
     nil))
 
 

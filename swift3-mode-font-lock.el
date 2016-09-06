@@ -32,7 +32,7 @@
 
 ;;; Code:
 
-(defun swift-mode:function-name-pos-p (pos)
+(defun swift3-mode:function-name-pos-p (pos)
   "Return t if POS is at just before afunction name."
   (save-excursion
     (save-match-data
@@ -41,7 +41,7 @@
       (skip-syntax-backward "w_")
       (looking-at "\\<\\(func\\|enum\\|struct\\|class\\|protocol\\|extension\\)\\>"))))
 
-(defun swift-mode:font-lock-match-function-names (limit)
+(defun swift3-mode:font-lock-match-function-names (limit)
   "Move the cursor just after a function name or others.
 
 Others includes enum, struct, class, protocol name.
@@ -50,10 +50,10 @@ Return nil otherwise."
   (and
    (re-search-forward "\\<\\(\\sw\\|\\s_\\)+\\>" limit t)
    (or
-    (swift-mode:function-name-pos-p (match-beginning 0))
-    (swift-mode:font-lock-match-function-names limit))))
+    (swift3-mode:function-name-pos-p (match-beginning 0))
+    (swift3-mode:font-lock-match-function-names limit))))
 
-(defconst swift-mode:font-lock-keywords
+(defconst swift3-mode:font-lock-keywords
   '(
     ;; Attributes
     "@\\(\\sw\\|\\s_\\)*"
@@ -216,7 +216,7 @@ Return nil otherwise."
     ("\\<iOSApplicationExtension\\>" . font-lock-builtin-face)
     ("\\<OSXApplicationExtension\\>" . font-lock-builtin-face)
 
-    (swift-mode:font-lock-match-function-names . font-lock-function-name-face)
+    (swift3-mode:font-lock-match-function-names . font-lock-function-name-face)
     )
   "Swift mode keywords for Font Lock.")
 

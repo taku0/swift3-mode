@@ -39,29 +39,29 @@
 
 ;;; Code:
 
-(declare-function swift-mode:backward-sexps-until "swift3-mode-indent.el"
+(declare-function swift3-mode:backward-sexps-until "swift3-mode-indent.el"
                   (token-types
                    &optional
                    stop-at-eol-token-types
                    stop-at-bol-token-types))
 
-(defun swift-mode:token (type text start end)
+(defun swift3-mode:token (type text start end)
   "Construct and returns a token."
   (list type text start end))
 
-(defun swift-mode:token:type (token)
+(defun swift3-mode:token:type (token)
   "Return the type of TOKEN."
   (nth 0 token))
 
-(defun swift-mode:token:text (token)
+(defun swift3-mode:token:text (token)
   "Return the text of TOKEN."
   (nth 1 token))
 
-(defun swift-mode:token:start (token)
+(defun swift3-mode:token:start (token)
   "Return the start position of TOKEN."
   (nth 2 token))
 
-(defun swift-mode:token:end (token)
+(defun swift3-mode:token:end (token)
   "Return the end position of TOKEN."
   (nth 3 token))
 
@@ -88,7 +88,7 @@
 ;; - anonymous-function-parameter-in ("in" after anonymous function parameter)
 ;; - outside-of-buffer
 ;;
-;; Additionaly, `swift-mode:backward-token-or-list' may return a parenthesized
+;; Additionaly, `swift3-mode:backward-token-or-list' may return a parenthesized
 ;; expression as a token with one of the following types:
 ;; - ()
 ;; - []
@@ -97,7 +97,7 @@
 
 ;;; Syntax table
 
-(defconst swift-mode:syntax-table
+(defconst swift3-mode:syntax-table
   (let ((table (make-syntax-table)))
     ;; Whitespace characters
     ;; Word constituents
@@ -149,42 +149,42 @@
 
 ;;; Lexers
 
-(defun swift-mode:implicit-semi-p ()
+(defun swift3-mode:implicit-semi-p ()
   "Return t if the cursor is after the end of a statement."
   (let
       ((previous-token (save-excursion
-                         (swift-mode:backquote-identifier-if-after-dot
-                          (swift-mode:backward-token-simple))))
+                         (swift3-mode:backquote-identifier-if-after-dot
+                          (swift3-mode:backward-token-simple))))
        (next-token (save-excursion
-                     (swift-mode:backquote-identifier-if-after-dot
-                      (swift-mode:forward-token-simple)))))
+                     (swift3-mode:backquote-identifier-if-after-dot
+                      (swift3-mode:forward-token-simple)))))
     ;; If the cursor is on the empty line, pretend an identifier is the line.
     (when (and
-           (< (swift-mode:token:end previous-token) (line-beginning-position))
-           (< (line-end-position) (swift-mode:token:start next-token)))
-      (setq next-token (swift-mode:token 'identifier "" (point) (point))))
+           (< (swift3-mode:token:end previous-token) (line-beginning-position))
+           (< (line-end-position) (swift3-mode:token:start next-token)))
+      (setq next-token (swift3-mode:token 'identifier "" (point) (point))))
     (cond
     ((or
       ;; Supresses implicit semicolon around binary operators and separators.
-      (memq (swift-mode:token:type previous-token)
+      (memq (swift3-mode:token:type previous-token)
             '(binary-operator \; \, :))
-      (memq (swift-mode:token:type next-token)
+      (memq (swift3-mode:token:type next-token)
             '(binary-operator \; \, :))
 
       ;; Supresses implicit semicolon after try, try?, and try!.
-      (member (swift-mode:token:text previous-token)
+      (member (swift3-mode:token:text previous-token)
               '("try" "try?" "try!"))
 
       ;; Suppress implicit semicolon after open brackets or before close
       ;; brackets.
-      (memq (swift-mode:token:type previous-token) '({ \( \[))
-      (memq (swift-mode:token:type next-token) '(} \) \]))
+      (memq (swift3-mode:token:type previous-token) '({ \( \[))
+      (memq (swift3-mode:token:type next-token) '(} \) \]))
 
       ;; Suppress implicit semicolon around keywords that cannot start or end
       ;; statements.
-      (member (swift-mode:token:text previous-token)
+      (member (swift3-mode:token:text previous-token)
               '("inout" "throws" "rethrows" "in" "where"))
-      (member (swift-mode:token:text next-token)
+      (member (swift3-mode:token:text next-token)
               '("inout" "throws" "rethrows" "in" "where")))
      nil)
 
@@ -196,12 +196,12 @@
     ;;   true
     ;; #end if
     ((or
-      (string-prefix-p "#" (swift-mode:token:text previous-token))
-      (string-prefix-p "#" (swift-mode:token:text next-token)))
+      (string-prefix-p "#" (swift3-mode:token:text previous-token))
+      (string-prefix-p "#" (swift3-mode:token:text next-token)))
      t)
 
     ;; Suppress implicit semicolon after modifiers.
-    ((member (swift-mode:token:text previous-token)
+    ((member (swift3-mode:token:text previous-token)
              '("indirect" "convenience" "dynamic" "final" "infix" "lazy"
                "mutating" "nonmutating" "optional" "override" "postfix"
                "prefix" "required" "static" "unowned" "weak" "internal"
@@ -211,23 +211,23 @@
     ;; internal(set) private(set) public(set)
     ;; unowned(safe) unowned(unsafe)
     ((and
-      (eq (swift-mode:token:type previous-token) '\))
+      (eq (swift3-mode:token:type previous-token) '\))
       (save-excursion
         (and
-         (eq (swift-mode:token:type (swift-mode:backward-token-simple)) '\))
-         (member (swift-mode:token:text (swift-mode:backward-token-simple))
+         (eq (swift3-mode:token:type (swift3-mode:backward-token-simple)) '\))
+         (member (swift3-mode:token:text (swift3-mode:backward-token-simple))
                  '("set" "safe" "unsafe"))
-         (eq (swift-mode:token:type (swift-mode:backward-token-simple)) '\()
-         (member (swift-mode:token:text
-                  (swift-mode:backquote-identifier-if-after-dot
-                   (swift-mode:backward-token-simple)))
+         (eq (swift3-mode:token:type (swift3-mode:backward-token-simple)) '\()
+         (member (swift3-mode:token:text
+                  (swift3-mode:backquote-identifier-if-after-dot
+                   (swift3-mode:backward-token-simple)))
                  '("unowned" "internal" "private" "public")))))
      nil)
 
     ;; Insert implicit semicolon before modifiers.
     ;;
     ;; Preceding mofidiers takes precedence over this.
-    ((member (swift-mode:token:text next-token)
+    ((member (swift3-mode:token:text next-token)
              '("indirect" "convenience" "dynamic" "final" "infix" "lazy"
                "mutating" "nonmutating" "optional" "override" "postfix"
                "prefix" "required" "static" "unowned" "weak" "internal"
@@ -237,50 +237,50 @@
     ;; Inserts implicit semicolon around keywords that forms single keyword
     ;; statements.
     ((or
-      (member (swift-mode:token:text previous-token)
+      (member (swift3-mode:token:text previous-token)
               '("break" "continue" "fallthrough"))
-      (member (swift-mode:token:text next-token)
+      (member (swift3-mode:token:text next-token)
               '("break" "continue" "fallthrough")))
      t)
 
     ;; Suppress implicit semicolon after keywords that cannot end statements.
-    ((member (swift-mode:token:text previous-token)
+    ((member (swift3-mode:token:text previous-token)
              '("while" "for" "switch" "case" "default" "catch" "if" "guard"
                "let" "var" "throw" "import" "return"))
      nil)
 
     ;; Inserts implicit semicolon before keywords that starts a new statement.
-    ((member (swift-mode:token:text next-token)
+    ((member (swift3-mode:token:text next-token)
              '("for" "repeat" "switch"  "case" "default" "defer" "do" "if"
                "guard" "let" "var" "throw" "import" "return"))
      t)
 
     ;; Inserts implicit semicolon before `while' unless it is part of
     ;; `repeat...while'.
-    ((equal (swift-mode:token:text next-token) "while")
+    ((equal (swift3-mode:token:text next-token) "while")
      (save-excursion
        (not
         (and
-         (eq (swift-mode:token:type previous-token) '\})
+         (eq (swift3-mode:token:type previous-token) '\})
          (progn
            (backward-list)
-           (equal (swift-mode:token:text
-                   (swift-mode:backquote-identifier-if-after-dot
-                    (swift-mode:backward-token-simple)))
+           (equal (swift3-mode:token:text
+                   (swift3-mode:backquote-identifier-if-after-dot
+                    (swift3-mode:backward-token-simple)))
                   "repeat"))))))
 
     ;; Inserts implicit around else
     ((or
-      (equal (swift-mode:token:text previous-token) "else")
-      (equal (swift-mode:token:text next-token) "else"))
+      (equal (swift3-mode:token:text previous-token) "else")
+      (equal (swift3-mode:token:text next-token) "else"))
      t)
 
     ;; Inserts implicit semicolon after attributes.
-    ((string-prefix-p "@" (swift-mode:token:text previous-token)) t)
+    ((string-prefix-p "@" (swift3-mode:token:text previous-token)) t)
 
     ;; Inserts implicit semicolon before keywords that behave like method
     ;; names.
-    ((member (swift-mode:token:text next-token)
+    ((member (swift3-mode:token:text next-token)
              '("get" "set" "willSet" "didSet" "subscript" "init" "deinit"))
      t)
 
@@ -291,12 +291,12 @@
     ;;
     ;; self . // not insert semicolon here
     ;;   init
-    ((member (swift-mode:token:text previous-token)
+    ((member (swift3-mode:token:text previous-token)
              '("set" "subscript" "init" "deinit"))
      nil)
 
     ;; Suppress implicit semicolon after declaration starters.
-    ((member (swift-mode:token:text previous-token)
+    ((member (swift3-mode:token:text previous-token)
              '("class" "struct" "protocol" "enum" "extension" "func" "typealias"
                "associatedtype"))
      nil)
@@ -310,22 +310,22 @@
     ;;   class
     ;;
     ;; `protocol' is handled by the next rule
-    ((member (swift-mode:token:text next-token)
+    ((member (swift3-mode:token:text next-token)
              '("class" "struct" "enum" "extension" "func" "typealias"
                "associatedtype"))
      t)
 
     ;; Inserts implicit semicolon before protocol unless it is followed by <.
-    ((equal "protocol" (swift-mode:token:text next-token))
-     (not (equal (swift-mode:token:text
+    ((equal "protocol" (swift3-mode:token:text next-token))
+     (not (equal (swift3-mode:token:text
                   (save-excursion
-                    (swift-mode:forward-token-simple)
-                    (swift-mode:forward-token-simple)))
+                    (swift3-mode:forward-token-simple)
+                    (swift3-mode:forward-token-simple)))
                  "<")))
 
     ;; Inserts implicit semicolon before attributes unless other condtions
     ;; met.
-    ((string-prefix-p "@" (swift-mode:token:text previous-token)) t)
+    ((string-prefix-p "@" (swift3-mode:token:text previous-token)) t)
 
     ;; Inserts implicit semicolon before open square bracket.
     ;;
@@ -340,7 +340,7 @@
     ;;   [
     ;;     1
     ;;   ]
-    ((eq (swift-mode:token:type next-token) '\[) t)
+    ((eq (swift3-mode:token:type next-token) '\[) t)
 
     ;; Inserts implicit semicolon before open parenthesis.
     ;;
@@ -355,7 +355,7 @@
     ;;   (
     ;;     1
     ;;   )
-    ((eq (swift-mode:token:type next-token) '\() t)
+    ((eq (swift3-mode:token:type next-token) '\() t)
 
     ;; Inserts semicolon before open curly bracket.
     ;;
@@ -368,17 +368,17 @@
     ;;   x in
     ;;   ...
     ;; }
-    ((eq (swift-mode:token:type next-token) '\{) t)
+    ((eq (swift3-mode:token:type next-token) '\{) t)
 
     ;; Otherwise, inserts implicit semicolon.
     (t t))))
 
-(defun swift-mode:type-colon-p ()
+(defun swift3-mode:type-colon-p ()
   "Return t if a colon at the cursor is the colon for type annotation.
 
 That is supertype declaration or type declaration of let or var."
   (save-excursion
-    (let ((previous-token (swift-mode:backward-token-simple)))
+    (let ((previous-token (swift3-mode:backward-token-simple)))
       ;; class Foo<T>: Bar ← type colon
       ;; class Foo<T> : Bar ← type colon
       ;; class Foo<T where T: Bar<[(Int, String)]>> : Bar ← type colon
@@ -392,7 +392,7 @@ That is supertype declaration or type declaration of let or var."
       ;; ]
       ;; foo(bar, baz: baz) ← not a type colon
       (or
-       (eq (swift-mode:token:type previous-token) '>)
+       (eq (swift3-mode:token:type previous-token) '>)
        ;; class Foo: ← type colon
        ;; extension Foo: ← type colon
        ;; let foo: ← type colon
@@ -400,13 +400,13 @@ That is supertype declaration or type declaration of let or var."
        ;; protocol Foo {
        ;;   typealias Bar: Baz ← type colon
        ;; }
-       (member (swift-mode:token:text
-                (swift-mode:backquote-identifier-if-after-dot
-                 (swift-mode:backward-token-simple)))
+       (member (swift3-mode:token:text
+                (swift3-mode:backquote-identifier-if-after-dot
+                 (swift3-mode:backward-token-simple)))
                '("class" "extension" "enum" "struct" "protocol" "typealias"
                  "associatedtype" "let" "var"))))))
 
-(defun swift-mode:case-colon-p ()
+(defun swift3-mode:case-colon-p ()
   "Return t if a colon at the cursor is the colon for case or default label."
   (save-excursion
     (member
@@ -423,29 +423,29 @@ That is supertype declaration or type declaration of let or var."
      ;; }
 
      ;; FIXME: mutual dependency
-     (swift-mode:token:text (swift-mode:backward-sexps-until
+     (swift3-mode:token:text (swift3-mode:backward-sexps-until
                              '(implicit-\; \; { \( \[ "case" "default" 'case-:)))
      '("case" "default"))))
 
-(defun swift-mode:anonyous-parameter-in-p ()
+(defun swift3-mode:anonyous-parameter-in-p ()
   "Return t if a 'in' token at the cursor is for anonymous function parameters."
   (save-excursion
     (eq
      ;; FIXME: mutual dependency
-     (swift-mode:token:type (swift-mode:backward-sexps-until
+     (swift3-mode:token:type (swift3-mode:backward-sexps-until
                              '(\; { \( \[ "for")))
      '{)))
 
-(defun swift-mode:fix-operator-type (token)
+(defun swift3-mode:fix-operator-type (token)
   "Return new operator token with proper token type."
   ;; Operator type (i.e. prefix, postfix, infix) is decided from spaces or
   ;; comments around the operator.
   ;; https://developer.apple.com/library/ios/documentation/Swift/Conceptual/Swift_Programming_Language/LexicalStructure.html#//apple_ref/doc/uid/TP40014097-CH30-ID410
   ;; https://github.com/apple/swift-evolution/blob/master/proposals/0037-clarify-comments-and-operators.md
   (let*
-      ((text (swift-mode:token:text token))
-       (start (swift-mode:token:start token))
-       (end (swift-mode:token:end token))
+      ((text (swift3-mode:token:text token))
+       (start (swift3-mode:token:start token))
+       (end (swift3-mode:token:end token))
        (has-preceding-space (or
                              (= start (point-min))
                              (memq (char-syntax (char-before start)) '(?  ?>))))
@@ -464,26 +464,26 @@ That is supertype declaration or type declaration of let or var."
          (has-preceding-space 'prefix-operator)
          ((or has-following-space has-following-dot) 'postfix-operator)
          (t 'binary-operator))))
-    (swift-mode:token type text start end)))
+    (swift3-mode:token type text start end)))
 
-(defun swift-mode:backquote-identifier-if-after-dot (token)
+(defun swift3-mode:backquote-identifier-if-after-dot (token)
   "Backquote identifiers including keywords if it is after dot.
 
 See SE-0071:
 https://github.com/apple/swift-evolution/blob/master/proposals/0071-member-keywords.md"
-  (if (and (string-match "^[a-z]" (swift-mode:token:text token))
+  (if (and (string-match "^[a-z]" (swift3-mode:token:text token))
            (save-excursion
-             (goto-char (swift-mode:token:start token))
-             (equal (swift-mode:token:text (swift-mode:backward-token-simple))
+             (goto-char (swift3-mode:token:start token))
+             (equal (swift3-mode:token:text (swift3-mode:backward-token-simple))
                     ".")))
-      (swift-mode:token
+      (swift3-mode:token
        'identifier
-       (concat "`" (swift-mode:token:text token) "`")
-       (swift-mode:token:start token)
-       (swift-mode:token:end token))
+       (concat "`" (swift3-mode:token:text token) "`")
+       (swift3-mode:token:start token)
+       (swift3-mode:token:end token))
     token))
 
-(defun swift-mode:forward-token ()
+(defun swift3-mode:forward-token ()
   "Move point forward to the next position of the end of a token.
 
 Return the token object.  If no more tokens available, return a token with
@@ -494,57 +494,57 @@ type `out-of-buffer'"
     (cond
      ;; Outside of buffer
      ((eobp)
-      (swift-mode:token 'outside-of-buffer "" (point) (point)))
+      (swift3-mode:token 'outside-of-buffer "" (point) (point)))
 
      ;; Implicit semicolon
      ((and (< pos (line-beginning-position))
-           (save-excursion (goto-char pos) (swift-mode:implicit-semi-p)))
+           (save-excursion (goto-char pos) (swift3-mode:implicit-semi-p)))
 
-      (swift-mode:token 'implicit-\;
+      (swift3-mode:token 'implicit-\;
                         (buffer-substring-no-properties pos (point))
                         pos
                         (point)))
 
      ;; Colon
      ((eq (char-after) ?:)
-      (swift-mode:token (cond
-                         ((swift-mode:type-colon-p) 'typing-:)
-                         ((swift-mode:case-colon-p) 'case-:)
+      (swift3-mode:token (cond
+                         ((swift3-mode:type-colon-p) 'typing-:)
+                         ((swift3-mode:case-colon-p) 'case-:)
                          (t ':))
                         ":"
                         (progn (forward-char) (1- (point)))
                         (point)))
 
      (t
-      (let ((token (swift-mode:forward-token-simple)))
-        (setq token (swift-mode:backquote-identifier-if-after-dot token))
+      (let ((token (swift3-mode:forward-token-simple)))
+        (setq token (swift3-mode:backquote-identifier-if-after-dot token))
 
-        (when (and (equal (swift-mode:token:text token) "in")
+        (when (and (equal (swift3-mode:token:text token) "in")
                    (save-excursion
-                     (goto-char (swift-mode:token:start token))
-                     (swift-mode:anonyous-parameter-in-p)))
+                     (goto-char (swift3-mode:token:start token))
+                     (swift3-mode:anonyous-parameter-in-p)))
           (setq token
-                (swift-mode:token
+                (swift3-mode:token
                  'anonymous-function-parameter-in
                  "in"
-                 (swift-mode:token:start token)
-                 (swift-mode:token:end token))))
+                 (swift3-mode:token:start token)
+                 (swift3-mode:token:end token))))
 
         token)))))
 
-(defun swift-mode:forward-token-simple ()
-  "Like `swift-mode:forward-token' without recursion, and never produces
+(defun swift3-mode:forward-token-simple ()
+  "Like `swift3-mode:forward-token' without recursion, and never produces
 `implicit-;' or `type-:'."
   (forward-comment (point-max))
   (cond
    ;; Outside of buffer
    ((eobp)
-    (swift-mode:token 'outside-of-buffer "" (point) (point)))
+    (swift3-mode:token 'outside-of-buffer "" (point) (point)))
 
    ;; Separators and parentheses
    ((memq (char-after) '(?, ?\; ?\{ ?\} ?\[ ?\] ?\( ?\) ?:))
     (forward-char)
-    (swift-mode:token (intern (string (char-before)))
+    (swift3-mode:token (intern (string (char-before)))
                        (string (char-before))
                        (1- (point))
                        (point)))
@@ -556,7 +556,7 @@ type `out-of-buffer'"
    ;; character, a square bracket, a parenthesis, or keyword 'protocol'.
    ((and (eq (char-after) ?<) (looking-at "<\\([[:upper:]\\[[(]\\|protocol\\)"))
     (forward-char)
-    (swift-mode:token '< "<" (1- (point)) (point)))
+    (swift3-mode:token '< "<" (1- (point)) (point)))
 
    ;; Close angle bracket for type parameters
    ;;
@@ -575,7 +575,7 @@ type `out-of-buffer'"
            (skip-syntax-backward "w_")
            (looking-at "[[:upper:]_]")))
     (forward-char)
-    (swift-mode:token '> ">" (1- (point)) (point)))
+    (swift3-mode:token '> ">" (1- (point)) (point)))
 
    ;; Operator (other than as, try, or is)
    ;;
@@ -595,14 +595,14 @@ type `out-of-buffer'"
                  (- (length text) (- (match-end 0) 2))))
         (setq text (substring text 0 (- (match-end 0) 2))))
       (goto-char end)
-      (swift-mode:fix-operator-type
-       (swift-mode:token nil text start end))))
+      (swift3-mode:fix-operator-type
+       (swift3-mode:token nil text start end))))
 
    ;; String
    ((eq (char-after) ?\")
     (let ((pos-after-comment (point)))
       (goto-char (scan-sexps (point) 1))
-      (swift-mode:token
+      (swift3-mode:token
        'identifier
        (buffer-substring-no-properties pos-after-comment (point))
        pos-after-comment
@@ -629,24 +629,24 @@ type `out-of-buffer'"
         (when (member (char-after) '(?? ?!))
           (forward-char)
           (setq text (concat text (list (char-before)))))
-        (swift-mode:token (if (member text '("as" "as?" "as!"))
+        (swift3-mode:token (if (member text '("as" "as?" "as!"))
                                'binary-operator
                              'prefix-operator)
                            text
                            (- (point) (length text))
                            (point)))
        ((equal text "is")
-        (swift-mode:token 'binary-operator
+        (swift3-mode:token 'binary-operator
                            text
                            (- (point) (length text))
                            (point)))
        (t
-        (swift-mode:token 'identifer
+        (swift3-mode:token 'identifer
                            text
                            (- (point) (length text))
                            (point))))))))
 
-(defun swift-mode:backward-token ()
+(defun swift3-mode:backward-token ()
   "Move point backward to the previous position of the end of a token.
 
 Return the token object.  If no more tokens available, return a token with
@@ -657,12 +657,12 @@ type `out-of-buffer'."
     (cond
      ;; Outside of buffer
      ((bobp)
-      (swift-mode:token 'outside-of-buffer "" (point) (point)))
+      (swift3-mode:token 'outside-of-buffer "" (point) (point)))
 
      ;; Implicit semicolon
      ((and (< (line-end-position) pos)
-           (save-excursion (goto-char pos) (swift-mode:implicit-semi-p)))
-      (swift-mode:token 'implicit-\;
+           (save-excursion (goto-char pos) (swift3-mode:implicit-semi-p)))
+      (swift3-mode:token 'implicit-\;
                         (buffer-substring-no-properties (point) pos)
                         (point)
                         pos))
@@ -670,43 +670,43 @@ type `out-of-buffer'."
      ;; Colon
      ((eq (char-before) ?:)
       (backward-char)
-      (swift-mode:token (cond
-                         ((swift-mode:type-colon-p) 'typing-:)
-                         ((swift-mode:case-colon-p) 'case-:)
+      (swift3-mode:token (cond
+                         ((swift3-mode:type-colon-p) 'typing-:)
+                         ((swift3-mode:case-colon-p) 'case-:)
                          (t ':))
                         ":"
                         (point)
                         (1+ (point))))
 
      (t
-      (let ((token (swift-mode:backward-token-simple)))
-        (setq token (swift-mode:backquote-identifier-if-after-dot token))
+      (let ((token (swift3-mode:backward-token-simple)))
+        (setq token (swift3-mode:backquote-identifier-if-after-dot token))
 
-        (when (and (equal (swift-mode:token:text token) "in")
+        (when (and (equal (swift3-mode:token:text token) "in")
                    (save-excursion
-                     (goto-char (swift-mode:token:start token))
-                     (swift-mode:anonyous-parameter-in-p)))
+                     (goto-char (swift3-mode:token:start token))
+                     (swift3-mode:anonyous-parameter-in-p)))
           (setq token
-                (swift-mode:token
+                (swift3-mode:token
                  'anonymous-function-parameter-in
                  "in"
-                 (swift-mode:token:start token)
-                 (swift-mode:token:end token))))
+                 (swift3-mode:token:start token)
+                 (swift3-mode:token:end token))))
         token)))))
 
-(defun swift-mode:backward-token-simple ()
-  "Like `swift-mode:backward-token' without recursion, and never produces
+(defun swift3-mode:backward-token-simple ()
+  "Like `swift3-mode:backward-token' without recursion, and never produces
 `implicit-;' or `type-:'."
   (forward-comment (- (point)))
   (cond
    ;; Outside of buffer
    ((bobp)
-    (swift-mode:token 'outside-of-buffer "" (point) (point)))
+    (swift3-mode:token 'outside-of-buffer "" (point) (point)))
 
    ;; Separators and parentheses
    ((memq (char-before) '(?, ?\; ?\{ ?\} ?\[ ?\] ?\( ?\) ?:))
     (backward-char)
-    (swift-mode:token (intern (string (char-after)))
+    (swift3-mode:token (intern (string (char-after)))
                        (string (char-after))
                        (point)
                        (1+ (point))))
@@ -716,9 +716,9 @@ type `out-of-buffer'."
          (eq (char-before (1- (point))) ?>)
          (save-excursion
            (backward-char)
-           (eq (swift-mode:token:type (swift-mode:backward-token-simple)) '>)))
+           (eq (swift3-mode:token:type (swift3-mode:backward-token-simple)) '>)))
     (backward-char)
-    (swift-mode:token (intern (string (char-after)))
+    (swift3-mode:token (intern (string (char-after)))
                       (string (char-after))
                       (point)
                       (1+ (point))))
@@ -730,7 +730,7 @@ type `out-of-buffer'."
    ;; character, a square bracket, a parenthesis, or keyword `protocol'.
    ((and (eq (char-before) ?<) (looking-at "\\([[:upper:]\\[[(]\\|protocol\\)"))
     (backward-char)
-    (swift-mode:token '< "<" (point) (1+ (point))))
+    (swift3-mode:token '< "<" (point) (1+ (point))))
 
    ;; Close angle bracket for type parameters
    ;;
@@ -742,7 +742,7 @@ type `out-of-buffer'."
            (skip-syntax-backward "w_")
            (looking-at "[[:upper:]_]")))
     (backward-char)
-    (swift-mode:token '> ">" (point) (1+ (point))))
+    (swift3-mode:token '> ">" (point) (1+ (point))))
 
    ;; Operator (other than as, try, or is)
    ;;
@@ -776,14 +776,14 @@ type `out-of-buffer'."
            (end (min point-before-comments (match-end 0)))
            (text (substring (match-string-no-properties 0) 0 (- end start))))
         (goto-char start)
-        (swift-mode:fix-operator-type
-         (swift-mode:token nil text start end)))))
+        (swift3-mode:fix-operator-type
+         (swift3-mode:token nil text start end)))))
 
    ;; String
    ((eq (char-before) ?\")
     (let ((pos-before-comment (point)))
       (goto-char (scan-sexps (point) -1))
-      (swift-mode:token
+      (swift3-mode:token
        'identifier
        (buffer-substring-no-properties (point) pos-before-comment)
        (point)
@@ -806,17 +806,17 @@ type `out-of-buffer'."
            (t (backward-char) (string (char-after))))))
       (cond
        ((member text '("is" "as"))
-        (swift-mode:token 'binary-operator
+        (swift3-mode:token 'binary-operator
                           text
                           (point)
                           (+ (point) (length text))))
        ((equal text "try")
-        (swift-mode:token 'prefix-operator
+        (swift3-mode:token 'prefix-operator
                           text
                           (point)
                           (+ (point) (length text))))
        (t
-        (swift-mode:token 'identifier
+        (swift3-mode:token 'identifier
                           text
                           (point)
                           (+ (point) (length text)))))))))

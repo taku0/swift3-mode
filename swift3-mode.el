@@ -45,33 +45,33 @@
 
 ;;; Keymap
 
-(defvar swift-mode-map
+(defvar swift3-mode-map
   (let ((map (make-sparse-keymap)))
     (set-keymap-parent map prog-mode-map)
-    (define-key map (kbd "M-j") #'swift-mode:indent-new-comment-line)
-    (define-key map (kbd "C-M-j") #'swift-mode:indent-new-comment-line)
+    (define-key map (kbd "M-j") #'swift3-mode:indent-new-comment-line)
+    (define-key map (kbd "C-M-j") #'swift3-mode:indent-new-comment-line)
     map)
   "Swift mode key map.")
 
 ;;; `foward-sexp-function'
 
-(defun swift-mode:forward-sexp (&optional arg)
+(defun swift3-mode:forward-sexp (&optional arg)
   (setq arg (or arg 1))
   (if (< 0 arg)
       (while (< 0 arg)
         (while (eq
-                (swift-mode:token:type (swift-mode:forward-token-or-list))
+                (swift3-mode:token:type (swift3-mode:forward-token-or-list))
                 'implicit-\;))
         (setq arg (1- arg))))
   (while (< arg 0)
     (while (eq
-            (swift-mode:token:type (swift-mode:backward-token-or-list))
+            (swift3-mode:token:type (swift3-mode:backward-token-or-list))
             'implicit-\;))
     (setq arg (1+ arg))))
 
 ;; Imenu
 
-(defun swift-mode:mk-regex-for-def (keyword)
+(defun swift3-mode:mk-regex-for-def (keyword)
   "Make a regex matching the identifier introduced by KEYWORD."
   (concat "\\<" (regexp-quote keyword) "\\>"
           "\\s *"
@@ -79,27 +79,27 @@
           "\\(?:" "\\sw" "\\|" "\\s_" "\\)" "+"
           "\\)"))
 
-(defconst swift-mode:imenu-generic-expression
+(defconst swift3-mode:imenu-generic-expression
   (list
-   (list "Functions" (swift-mode:mk-regex-for-def "func") 1)
-   (list "Classes"   (swift-mode:mk-regex-for-def "class") 1)
-   (list "Enums"     (swift-mode:mk-regex-for-def "enum") 1)
-   (list "Protocols" (swift-mode:mk-regex-for-def "protocol") 1)
-   (list "Structs"   (swift-mode:mk-regex-for-def "struct") 1)
-   (list "Extensions"   (swift-mode:mk-regex-for-def "extension") 1)
-   (list "Constants" (swift-mode:mk-regex-for-def "let") 1)
-   (list "Variables" (swift-mode:mk-regex-for-def "var") 1))
-  "Value for `imenu-generic-expression' in `swift-mode'.")
+   (list "Functions" (swift3-mode:mk-regex-for-def "func") 1)
+   (list "Classes"   (swift3-mode:mk-regex-for-def "class") 1)
+   (list "Enums"     (swift3-mode:mk-regex-for-def "enum") 1)
+   (list "Protocols" (swift3-mode:mk-regex-for-def "protocol") 1)
+   (list "Structs"   (swift3-mode:mk-regex-for-def "struct") 1)
+   (list "Extensions"   (swift3-mode:mk-regex-for-def "extension") 1)
+   (list "Constants" (swift3-mode:mk-regex-for-def "let") 1)
+   (list "Variables" (swift3-mode:mk-regex-for-def "var") 1))
+  "Value for `imenu-generic-expression' in `swift3-mode'.")
 
 ;;;###autoload
-(define-derived-mode swift-mode prog-mode "Swift"
+(define-derived-mode swift3-mode prog-mode "Swift"
   "Major mode for editing Swift code.
 
-\\{swift-mode-map}"
-  :syntax-table swift-mode:syntax-table
+\\{swift3-mode-map}"
+  :syntax-table swift3-mode:syntax-table
   :group 'swift
 
-  (setq font-lock-defaults '(swift-mode:font-lock-keywords))
+  (setq font-lock-defaults '(swift3-mode:font-lock-keywords))
 
   (setq-local comment-start "// ")
   (setq-local comment-end "")
@@ -121,23 +121,23 @@
   (setq-local comment-multi-line t)
 
   (setq-local indent-tabs-mode nil)
-  (setq-local indent-line-function #'swift-mode:indent-line)
+  (setq-local indent-line-function #'swift3-mode:indent-line)
 
-  (setq-local forward-sexp-function #'swift-mode:forward-sexp)
+  (setq-local forward-sexp-function #'swift3-mode:forward-sexp)
 
   (setq-local electric-indent-chars
               (append "{}()[]:;,." electric-indent-chars))
 
-  (add-hook 'post-self-insert-hook #'swift-mode:post-self-insert nil t)
+  (add-hook 'post-self-insert-hook #'swift3-mode:post-self-insert nil t)
 
-  (setq-local imenu-generic-expression swift-mode:imenu-generic-expression)
+  (setq-local imenu-generic-expression swift3-mode:imenu-generic-expression)
 
-  (setq-local beginning-of-defun-function #'swift-mode:beginning-of-defun)
-  (setq-local end-of-defun-function #'swift-mode:end-of-defun)
+  (setq-local beginning-of-defun-function #'swift3-mode:beginning-of-defun)
+  (setq-local end-of-defun-function #'swift3-mode:end-of-defun)
 
-  (use-local-map swift-mode-map))
+  (use-local-map swift3-mode-map))
 
-;;;###autoload (add-to-list 'auto-mode-alist '("\\.swift\\'" . swift-mode))
+;;;###autoload (add-to-list 'auto-mode-alist '("\\.swift\\'" . swift3-mode))
 
 (provide 'swift3-mode)
 
