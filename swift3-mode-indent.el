@@ -38,49 +38,49 @@
 (defcustom swift3-mode:basic-offset 4
   "Amount of indentation for block contents."
   :type 'integer
-  :group 'swift
+  :group 'swift3
   :safe 'integerp)
 
 ;;;###autoload
 (defcustom swift3-mode:parenthesized-expression-offset 2
   "Amount of indentation inside parentheses and square brackets."
   :type 'integer
-  :group 'swift
+  :group 'swift3
   :safe 'integerp)
 
 ;;;###autoload
 (defcustom swift3-mode:multiline-statement-offset 2
   "Amount of indentation for continuations of expressions."
   :type 'integer
-  :group 'swift
+  :group 'swift3
   :safe 'integerp)
 
 ;;;###autoload
 (defcustom swift3-mode:switch-case-offset 0
   "Amount of indentation for case labels in switch statements."
   :type 'integer
-  :group 'swift
+  :group 'swift3
   :safe 'integerp)
 
 ;;;###autoload
 (defcustom swift3-mode:insert-space-after-asterisk-in-comment t
   "Automatically insert a space after asterisk in comment if non-nil."
   :type 'boolean
-  :group 'swift
+  :group 'swift3
   :safe 'booleanp)
 
 ;;;###autoload
 (defcustom swift3-mode:auto-close-multiline-comment t
   "If non-nil, `indent-new-comment-line' automatically close multiline comment."
   :type 'boolean
-  :group 'swift
+  :group 'swift3
   :safe 'booleanp)
 
 ;;;###autoload
 (defcustom swift3-mode:fix-comment-close t
   "Fix \"* /\" in incomplete multiline comment to \"*/\" if non-nil."
   :type 'boolean
-  :group 'swift
+  :group 'swift3
   :safe 'booleanp)
 
 (defconst swift3-mode:statement-parent-tokens

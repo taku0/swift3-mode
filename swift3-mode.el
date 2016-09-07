@@ -39,7 +39,7 @@
 (require 'swift3-mode-beginning-of-defun)
 
 ;;;###autoload
-(defgroup swift nil
+(defgroup swift3 nil
   "Major-mode for Apple's Swift programming language."
   :group 'languages)
 
@@ -97,7 +97,7 @@
 
 \\{swift3-mode-map}"
   :syntax-table swift3-mode:syntax-table
-  :group 'swift
+  :group 'swift3
 
   (setq font-lock-defaults '(swift3-mode:font-lock-keywords))
 
