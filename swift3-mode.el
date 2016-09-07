@@ -133,9 +133,7 @@
   (setq-local imenu-generic-expression swift3-mode:imenu-generic-expression)
 
   (setq-local beginning-of-defun-function #'swift3-mode:beginning-of-defun)
-  (setq-local end-of-defun-function #'swift3-mode:end-of-defun)
-
-  (use-local-map swift3-mode-map))
+  (setq-local end-of-defun-function #'swift3-mode:end-of-defun))
 
 ;;;###autoload (add-to-list 'auto-mode-alist '("\\.swift\\'" . swift3-mode))
 
