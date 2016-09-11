@@ -1,4 +1,6 @@
 [![License GPL 3][badge-license]][copying]
+[![MELPA](https://melpa.org/packages/swift3-mode-badge.svg)](https://melpa.org/#/swift3-mode)
+[![MELPA](https://stable.melpa.org/packages/swift3-mode-badge.svg)](https://melpa.org/#/swift3-mode)
 
 # swift3-mode
 
