@@ -47,7 +47,7 @@ clean:
 
 test:
 ## Tests the package.
-	$(CASK) exec $(EMACS) --batch \
+	$(CASK) exec $(EMACS) --batch -q \
 	  --eval "(add-to-list 'load-path \""$(shell realpath .)"\")" \
 	  -l swift3-mode.el \
 	  -l test/swift3-mode-test-indent.el \
