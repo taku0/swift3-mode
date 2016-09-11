@@ -34,14 +34,14 @@
 (require 'swift3-mode)
 (require 'swift3-mode-indent)
 
-(defvar swift-mode:test:basedir
+(defvar swift3-mode:test:basedir
   (file-name-directory (or load-file-name buffer-file-name)))
 
 (defun swift3-mode:setup-error-buffer ()
   "Initialize and switch to the error buffer.
 
 Return the error-buffer"
-  (switch-to-buffer (get-buffer-create "*swift-mode-test-indent*"))
+  (switch-to-buffer (get-buffer-create "*swift3-mode-test-indent*"))
   (fundamental-mode)
   (setq view-read-only nil)
   (erase-buffer)
@@ -55,7 +55,7 @@ Return the error-buffer"
         (current-line 0)
         (error-count 0))
     (setq default-directory
-          (concat (file-name-as-directory swift-mode:test:basedir)
+          (concat (file-name-as-directory swift3-mode:test:basedir)
                   "swift-files"))
 
     (dolist (swift-file (file-expand-wildcards "*.swift"))
@@ -67,7 +67,7 @@ Return the error-buffer"
         (while (not (eobp))
           (setq current-line (1+ current-line))
           (unless (looking-at ".*//.*swift3-mode:test:keep-indent")
-            (when (looking-at ".*//.*swift3-mode:test:eval\(.*\)")
+            (when (looking-at ".*//.*swift3-mode:test:eval\\(.*\\)")
               (eval-region (match-beginning 1) (match-end 1)))
             (unless
                 (swift3-mode:test-current-line-indent
@@ -109,6 +109,13 @@ ERROR-BUFFER is the buffer to output errors."
         (prin1-to-string original-indent)
         " but "
         (prin1-to-string computed-indent))))
+
+    (when (and (= original-indent computed-indent) known-bug)
+      (swift3-mode:show-error
+       error-buffer swift-file current-line
+       "info"
+       "known-bug is fixed somehow"))
+
     (= original-indent computed-indent)))
 
 (defun swift3-mode:show-error (error-buffer file line level message)
@@ -123,7 +130,7 @@ LEVEL is the error level (e.g. error, warning).
 MESSAGE is the error message."
   (let ((formatted
          (concat
-          "swift-mode-test:"
+          "swift3-mode-test:"
           file
           ":"
           (prin1-to-string line)
