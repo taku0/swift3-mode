@@ -41,7 +41,8 @@
 ;;;###autoload
 (defgroup swift3 nil
   "Major-mode for Apple's Swift programming language."
-  :group 'languages)
+  :group 'languages
+  :prefix "swift-mode:")
 
 ;;; Keymap
 
