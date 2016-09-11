@@ -44,6 +44,7 @@ To install without MELPA, download [latest release](https://github.com/taku0/swi
 - `beginning-of-defun` and `end-of-defun`
 - `indent-new-comment-line`
 - Imenu
+- Running Swift REPL in a buffer (`M-x run-swift`)
 
 This package does not provide REPL and flycheck. Those should be separate packages.
 
