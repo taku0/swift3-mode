@@ -6,9 +6,13 @@ Major-mode for Apple's Swift programming language.
 
 This is a fork of [chrisbarrett/swift-mode](https://github.com/chrisbarrett/swift-mode) with a new indentation engine, supporting Swift 3.
 
+This project will be integrated into [swift-emacs/swift-mode](https://github.com/swift-emacs/swift-mode), that was renamed form chrisbarrett/swift-mode.
+
 ## Installation
 
-Download [latest release](https://github.com/taku0/swift3-mode/releases) and execute `M-x package-install-file`.
+Install `swift3-mode` package from MELPA.
+
+To install without MELPA, download [latest release](https://github.com/taku0/swift3-mode/releases) and execute `M-x package-install-file`.
 
 ## Features
 
@@ -148,6 +152,7 @@ For other commands, run `make help`.
 ## Related projects
 
 - [Official swift-mode.el by Apple](https://github.com/apple/swift/blob/master/utils/swift-mode.el) Seems still in very early stage for now. We cannot contribute to it due to the license incompatibility.
+- [company-sourcekit](https://github.com/nathankot/company-sourcekit) Completion for Swift projects via SourceKit with the help of SourceKitten .
 
 ## License
 
