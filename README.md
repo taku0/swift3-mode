@@ -135,6 +135,16 @@ var x = foo
 
 Both are syntactically correct code. We cannot handle this case properly. This is also a future work.
 
+## Hacking
+
+To build the package locally, run `make package`.
+
+To install the built package, run `make install`.
+
+To run tests, run `make test`.
+
+For other commands, run `make help`.
+
 ## Related projects
 
 - [Official swift-mode.el by Apple](https://github.com/apple/swift/blob/master/utils/swift-mode.el) Seems still in very early stage for now. We cannot contribute to it due to the license incompatibility.
