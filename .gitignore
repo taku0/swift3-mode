@@ -1,3 +1,6 @@
 *~
+/.cask/
+*.elc
+/dist/
 swift3-mode-autoloads.el
 swift3-mode-pkg.el
