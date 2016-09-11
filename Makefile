@@ -3,7 +3,7 @@ EMACS ?= emacs
 VERSION := $(shell EMACS=$(EMACS) $(CASK) version)
 
 SRC = $(wildcard *.el)
-PACKAGE = dist/flycheck-swift-$(VERSION).el
+PACKAGE = dist/swift3-mode-$(VERSION).tar
 
 .PHONY: help all cask-install package install test clean
 
