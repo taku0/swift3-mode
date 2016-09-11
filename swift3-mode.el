@@ -37,6 +37,7 @@
 (require 'swift3-mode-indent)
 (require 'swift3-mode-font-lock)
 (require 'swift3-mode-beginning-of-defun)
+(require 'swift3-mode-repl)
 
 ;;;###autoload
 (defgroup swift3 nil
@@ -51,8 +52,20 @@
     (set-keymap-parent map prog-mode-map)
     (define-key map (kbd "M-j") #'swift3-mode:indent-new-comment-line)
     (define-key map (kbd "C-M-j") #'swift3-mode:indent-new-comment-line)
+    (define-key map (kbd "C-c C-z") 'swift-mode:run-repl)
+    (define-key map (kbd "C-c C-f") 'swift-mode:send-buffer)
+    (define-key map (kbd "C-c C-r") 'swift-mode:send-region)
+    (easy-menu-define swift-menu map "Swift3 Mode menu"
+      `("Swift3"
+        :help "Swift-specific Features"
+        ["Run REPL" swift-mode-run-repl
+         :help "Run Swift REPL"]
+        ["Send buffer to REPL" swift-mode-send-buffer
+         :help "Send the current buffer's contents to the REPL"]
+        ["Send region to REPL" swift-mode-send-region
+         :help "Send currently selected region to the REPL"]))
     map)
-  "Swift mode key map.")
+  "Swift3 mode key map.")
 
 ;;; `foward-sexp-function'
 
