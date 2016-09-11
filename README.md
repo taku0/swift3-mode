@@ -154,6 +154,7 @@ For other commands, run `make help`.
 
 - [Official swift-mode.el by Apple](https://github.com/apple/swift/blob/master/utils/swift-mode.el) Seems still in very early stage for now. We cannot contribute to it due to the license incompatibility.
 - [company-sourcekit](https://github.com/nathankot/company-sourcekit) Completion for Swift projects via SourceKit with the help of SourceKitten .
+- [flycheck-swift](https://github.com/swift-emacs/flycheck-swift) Flycheck extensions for Swift.
 
 ## License
 
