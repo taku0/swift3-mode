@@ -4,6 +4,6 @@ private
                */ class /*
                          */ Foo /*
                                  */ {
-    aaa() // FIXME
+    aaa() // swift3-mode:test:known-bug
     bbb()
-}
+} // swift3-mode:test:known-bug

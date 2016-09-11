@@ -88,7 +88,8 @@ CURRENT-LINE is the current line number.
 ERROR-BUFFER is the buffer to output errors."
   (back-to-indentation)
   (let ((original-indent (current-column))
-        computed-indent)
+        computed-indent
+        (known-bug (looking-at ".*//.*swift3-mode:test:known-bug")))
     (delete-horizontal-space)
     (when (= original-indent 0)
       (indent-line-to 1))
@@ -96,17 +97,21 @@ ERROR-BUFFER is the buffer to output errors."
     (swift3-mode:indent-line)
     (back-to-indentation)
     (setq computed-indent (current-column))
+    (indent-line-to original-indent)
 
     (when (/= original-indent computed-indent)
-      (swift3-mode:show-error error-buffer swift-file current-line
+      (swift3-mode:show-error
+       error-buffer swift-file current-line
+       (if known-bug "warning" "error")
        (concat
+        (if known-bug "(knwon bug) " "")
         "expected "
         (prin1-to-string original-indent)
         " but "
         (prin1-to-string computed-indent))))
     (= original-indent computed-indent)))
 
-(defun swift3-mode:show-error (error-buffer file line message)
+(defun swift3-mode:show-error (error-buffer file line level message)
   "Show an error message to the ERROR-BUFFER or stdout.
 
 If the Emacs is in the batch mode, the message is printed to the stdout.
@@ -114,6 +119,7 @@ Otherwise, the message is appended to the ERROR-BUFFER.
 
 FILE is the filename of the test case.
 LINE is the line number of the error.
+LEVEL is the error level (e.g. error, warning).
 MESSAGE is the error message."
   (let ((formatted
          (concat
@@ -121,8 +127,9 @@ MESSAGE is the error message."
           file
           ":"
           (prin1-to-string line)
-          ":"
-          " error: "
+          ": "
+          level
+          ": "
           message
           "\n")))
     (swift3-mode:print-message error-buffer formatted)))
