@@ -22,25 +22,46 @@ To install without MELPA, download [latest release](https://github.com/taku0/swi
 - Indentation
 
   ```swift
-  // Common-style
-  while
-    case let .P1(x),
-         let .P2(x) = xs,
-    case let .P3(y),
-         let .P4(y) = ys {
-      foo()
+  switch foo {
+  case let .P1(x)
+         where
+           x > 0,
+       let .P2(x)
+         where
+           x > 0:
+      bar()
+        .then { x in
+            return baz(x)
+        }
+        .then {(
+                 x,
+                 y
+               ) in
+            return moo(x + y)
+        }
   }
 
-  // Utrecht-style
-  while case let .P1(x)
-           , let .P2(x)
-               = xs
-      , case let .P3(y)
-           , let .P4(y)
-               = ys
-  {
-      foo()
-  }
+  // Hanging brace
+  let x = [
+    1,
+    2,
+    3
+  ]
+
+  // Brace on its own line
+  let y =
+    [
+      1,
+      2,
+      3
+    ]
+
+  // Utrecht style
+  let z =
+    [ 1
+    , 2
+    , 3
+    ]
   ```
 - `forward-sexp`
 - `beginning-of-defun` and `end-of-defun`
@@ -85,7 +106,8 @@ Another example is difficulty of handling of colons. We have to pair all `?` and
 
 ```swift
 switch foo {
-  case let P(x) where x is Foo? ? a ? b : c ?? d : e ? f : g : h ? i?.j() : k()
+  case let P(x) where x is Foo? ? a ? b : c ?? d : e ? f : g :
+    h ? i?.j() : k()
 }
 
 switch foo {
