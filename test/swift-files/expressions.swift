@@ -263,6 +263,7 @@ let x = { (
             y: Int
           )
             ->
+            throws
             Foo
           in
     println("Hello, World! " + x + y)
@@ -271,3 +272,186 @@ let x = { (
     return foo
 }
 
+let x = { [
+            weak
+              self,
+            unowned(unsafe)
+              foo
+          ]
+          (
+            x: Int,
+            y: Int
+          )
+            throws
+            ->
+            Foo
+          in
+    println("Hello, World! " + x + y)
+    println("Hello, World! " + x + y)
+
+    return foo
+}
+
+let x = {
+    [
+      weak self,
+      weak foo
+    ]
+    (
+      x: Int,
+      y: Int
+    )
+      throws
+      ->
+      Foo
+    in
+    println("Hello, World! " + x + y)
+    println("Hello, World! " + x + y)
+
+    return foo
+}
+
+
+let x = { a,
+          b,
+          c, d,
+          e
+          in
+    println("Hello, World! " + x + y)
+}
+
+let x = {
+    a,
+    b,
+    c, d,
+    e
+    in
+    println("Hello, World! " + x + y)
+}
+
+let x = { a
+        , b
+        , c, d
+        , e
+          in
+    println("Hello, World! " + x + y)
+}
+
+// Implicit member expressions
+
+x =
+  .aaa
+
+// Parenthesized expressions
+
+let x = (
+  a,
+  b, c,
+  d,
+  e,
+  ++,
+  **, --,
+  aaa
+)
+
+let x = (
+  aaa:
+    a,
+  aaa: b, aaa:
+            c,
+  aaa:
+    d,
+  aaa
+    :e,
+  aaa:
+    ++,
+  aaa: **, aaa:
+             --,
+  aaa:
+    aaa
+)
+
+// Selector expressions
+
+let x =
+  #selector(
+    Foo.bar(
+      _:,
+      aaa:,
+      bbb:
+    )
+  )
+
+let x =
+  #selector(
+    getter:
+      Foo.ppp
+  )
+
+
+// Funcation call expressions and explicit member expressions
+
+let x =
+  foo(a,
+      b,
+      c)
+
+let x =
+  foo(
+    a,
+    b,
+    c
+  )
+
+let x = foo.
+  .bar(a:
+         aaa,
+       b:
+         bbb(c:
+               c,
+             c:
+               c) { x in
+             foo
+             bar
+         },
+       c:
+         aaaa[
+           aaa
+         ]
+  ) { aaa in
+      aaa
+      aaa
+      aaa
+  }
+
+let x = foo
+  .bar() { a in
+      aaa
+  }
+
+let x = foo
+  .bar() {
+      a in
+      aaa
+  }
+
+let x = foo
+  .bar() {
+      a
+      in
+      aaa
+  }
+
+foo
+(bar) // this is not a function call
+
+// Subscript expression
+
+foo[
+  1,
+  2, 3,
+  4
+]
+
+foo
+[1] // this is not a subscript expression
