@@ -66,13 +66,21 @@ Return the error-buffer"
         (setq current-line 0)
         (while (not (eobp))
           (setq current-line (1+ current-line))
-          (unless (looking-at ".*//.*swift3-mode:test:keep-indent")
+          (cond
+           ((looking-at ".*//.*swift3-mode:test:keep-indent")
+            nil)
+
+           ((= (line-beginning-position) (line-end-position))
+            ;; Empty line
+            nil)
+
+           (t
             (when (looking-at ".*//.*swift3-mode:test:eval\\(.*\\)")
               (eval-region (match-beginning 1) (match-end 1)))
             (unless
                 (swift3-mode:test-current-line-indent
                  swift-file current-line error-buffer)
-              (setq error-count (1+ error-count))))
+              (setq error-count (1+ error-count)))))
           (forward-line))))
     (when (= error-count 0)
       (swift3-mode:print-message error-buffer "no regressions\n"))
