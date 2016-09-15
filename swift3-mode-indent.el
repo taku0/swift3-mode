@@ -1328,7 +1328,7 @@ Newlines inside comments are ignored."
 (defun swift3-mode:goto-non-comment-bol ()
   "Back to the beginning of line that is not inside a comment."
   (beginning-of-line)
-  (while (nth 8 (syntax-ppss))
+  (while (nth 4 (syntax-ppss))
     ;; The cursor is in a comment. Backs to the beginning of the comment.
     (goto-char (nth 8 (syntax-ppss)))
     (beginning-of-line)))
@@ -1338,7 +1338,7 @@ Newlines inside comments are ignored."
 
 If this line ends with a single-line comment, goto just before the comment."
   (end-of-line)
-  (while (nth 8 (syntax-ppss))
+  (while (nth 4 (syntax-ppss))
     ;; The cursor is in a comment.
     (if (nth 4 (syntax-ppss))
         ;; This ia a single-line comment
@@ -1363,7 +1363,7 @@ Return nil otherwise."
   (skip-syntax-forward " >"))
 
 (defun swift3-mode:incomplete-comment-p ()
-  (and (nth 8 (syntax-ppss))
+  (and (nth 4 (syntax-ppss))
        (save-excursion
          (goto-char (nth 8 (syntax-ppss)))
          (not (forward-comment 1)))))
