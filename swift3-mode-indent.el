@@ -691,7 +691,21 @@ This function is also used for close-curly-brace."
             (goto-char (1+ pos)))
 
            (t
-            (setq next-token (swift3-mode:forward-token-or-list)))))))
+            ;; Suppose indenting the A token below.
+            ;;
+            ;; foo {
+            ;;   A
+            ;;
+            ;; This function is called on the open curly brace.
+            ;; If the close curly brace doesn't exist,
+            ;; swift3-mode:forward-token-or-list results in
+            ;; "Unbalanced parentheses" error.
+            ;; So if the point is just before the open curly brace,
+            ;; exits immediately.
+            (forward-comment (point-max))
+            (if (< (point) pos)
+                (setq next-token (swift3-mode:forward-token-or-list))
+              (goto-char (1+ pos))))))))
     (swift3-mode:calculate-indent-of-expression
      swift3-mode:statement-parent-tokens
      offset
