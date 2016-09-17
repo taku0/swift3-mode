@@ -77,19 +77,21 @@ Return nil otherwise."
     ("#if\\>" . font-lock-preprocessor-face)
     ("#line\\>" . font-lock-preprocessor-face)
     ("#selector\\>" . font-lock-preprocessor-face)
-
+    
     ;; Keywords used in declarations
     "\\<associatedtype\\>"
     "\\<class\\>"
     "\\<deinit\\>"
     "\\<enum\\>"
     "\\<extension\\>"
+    "\\<fileprivate\\>"
     "\\<func\\>"
     "\\<import\\>"
     "\\<init\\>"
     "\\<inout\\>"
     "\\<internal\\>"
     "\\<let\\>"
+    "\\<open\\>"
     "\\<operator\\>"
     "\\<private\\>"
     "\\<protocol\\>"

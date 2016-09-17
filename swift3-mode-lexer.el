@@ -205,10 +205,10 @@
              '("indirect" "convenience" "dynamic" "final" "infix" "lazy"
                "mutating" "nonmutating" "optional" "override" "postfix"
                "prefix" "required" "static" "unowned" "weak" "internal"
-               "private" "public"))
+               "private" "public" "open" "fileprivate"))
      nil)
 
-    ;; internal(set) private(set) public(set)
+    ;; internal(set) private(set) public(set) open(set) fileprivate(set)
     ;; unowned(safe) unowned(unsafe)
     ((and
       (eq (swift3-mode:token:type previous-token) '\))
@@ -221,7 +221,7 @@
          (member (swift3-mode:token:text
                   (swift3-mode:backquote-identifier-if-after-dot
                    (swift3-mode:backward-token-simple)))
-                 '("unowned" "internal" "private" "public")))))
+                 '("unowned" "internal" "private" "public" "open" "fileprivate")))))
      nil)
 
     ;; Insert implicit semicolon before modifiers.
@@ -231,7 +231,7 @@
              '("indirect" "convenience" "dynamic" "final" "infix" "lazy"
                "mutating" "nonmutating" "optional" "override" "postfix"
                "prefix" "required" "static" "unowned" "weak" "internal"
-               "private" "public"))
+               "private" "public" "open" "fileprivate"))
      t)
 
     ;; Inserts implicit semicolon around keywords that forms single keyword
