@@ -124,14 +124,14 @@ foo() // swift3-mode:test:known-bug
 let x = [
   1,
   2,
-  3, 4
+  3, 4,
   5
 ]
 
 let x = [
   1,
   2,
-  3, 4
+  3, 4,
   5,
 ]
 
@@ -139,14 +139,58 @@ let x =
   [
     1,
     2,
-    3, 4
+    3, 4,
     5
   ]
 
 let x = [ 1,
           2,
-          3, 4
+          3, 4,
           5 ]
+
+let x =
+  [ 1
+  , 2
+  , 3, 4
+  , 5
+  ]
+
+// swift3-mode:test:eval (setq-local swift3-mode:parenthesized-expression-offset 3)
+
+let x = [
+   1,
+   2,
+   3, 4,
+   5
+]
+
+let x = [
+   1,
+   2,
+   3, 4,
+   5,
+]
+
+let x =
+  [
+     1,
+     2,
+     3, 4,
+     5
+  ]
+
+let x = [ 1,
+          2,
+          3, 4,
+          5 ]
+
+let x =
+  [ 1
+  , 2
+  , 3, 4
+  , 5 ]
+
+// swift3-mode:test:eval (setq-local swift3-mode:parenthesized-expression-offset 2)
 
 // Dictionary literal
 
@@ -371,6 +415,78 @@ let x = (
     aaa
 )
 
+let x =
+  (
+    1,
+    2,
+    3, 4,
+    5
+  )
+
+let x = ( 1,
+          2,
+          3, 4,
+          5 )
+
+let x =
+  ( 1
+  , 2
+  , 3, 4
+  , 5
+  )
+
+// swift3-mode:test:eval (setq-local swift3-mode:parenthesized-expression-offset 3)
+
+
+let x = (
+   a,
+   b, c,
+   d,
+   e,
+   ++,
+   **, --,
+   aaa
+)
+
+let x = (
+   aaa:
+     a,
+   aaa: b, aaa:
+             c,
+   aaa:
+     d,
+   aaa
+     :e,
+   aaa:
+     ++,
+   aaa: **, aaa:
+              --,
+   aaa:
+     aaa
+)
+
+let x =
+  (
+     1,
+     2,
+     3, 4,
+     5
+  )
+
+let x = ( 1,
+          2,
+          3, 4,
+          5 )
+
+let x =
+  ( 1
+  , 2
+  , 3, 4
+  , 5
+  )
+
+// swift3-mode:test:eval (setq-local swift3-mode:parenthesized-expression-offset 2)
+
 // Selector expressions
 
 let x =
@@ -387,7 +503,6 @@ let x =
     getter:
       Foo.ppp
   )
-
 
 // Funcation call expressions and explicit member expressions
 
