@@ -298,7 +298,7 @@
     ;; Suppress implicit semicolon after declaration starters.
     ((member (swift3-mode:token:text previous-token)
              '("class" "struct" "protocol" "enum" "extension" "func" "typealias"
-               "associatedtype" "precedencegroup"))
+               "associatedtype" "precedencegroup" "operator"))
      nil)
 
     ;; Inserts implicit semicolon before declaration starters.
@@ -456,8 +456,19 @@ That is supertype declaration or type declaration of let or var."
                                              (looking-at "/\\*\\|//"))
                              (= (char-after end) ?\C-j)))
        (has-following-dot (eq (char-after end) ?.))
+       (is-declaration (save-excursion
+                         ;; i.e.
+                         ;; func +++(x1: X, x2: X)
+                         ;; or operator declarations.
+                         (goto-char start)
+                         (member
+                          (swift3-mode:token:text
+                           (swift3-mode:backquote-identifier-if-after-dot
+                            (swift3-mode:backward-token-simple)))
+                          '("func" "operator"))))
        (type
         (cond
+         (is-declaration 'identifier)
          ((member text '("try" "try?" "try!")) 'prefix-operator)
          ((equal text ".") 'binary-operator)
          ((and has-preceding-space has-following-space) 'binary-operator)

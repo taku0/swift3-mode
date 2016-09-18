@@ -364,12 +364,10 @@ infix
 prefix
   operator
   +++
-foo() // swift3-mode:test:known-bug
 
 postfix
   operator
   +++
-foo() // swift3-mode:test:known-bug
 
 precedencegroup
   precedenceGroupName {
