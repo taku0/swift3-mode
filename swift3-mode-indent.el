@@ -828,7 +828,9 @@ This is also known as Utrecht-style in the Haskell community."
       (setq next-token (swift3-mode:forward-token-or-list)))
     (if (eq (swift3-mode:token:type anchor) '\,)
         ;; Aligns with the previous comma.
-        (swift3-mode:align-with-current-line)
+        (progn
+          (goto-char (swift3-mode:token:start anchor))
+          (swift3-mode:align-with-current-line))
       ;; Aligns with the end of the anchor
       (goto-char (swift3-mode:token:end anchor))
       (backward-char)

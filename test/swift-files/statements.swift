@@ -239,10 +239,10 @@ while let
         y
         =
         yy
-    , x  // swift3-mode:test:known-bug
+    , x
         ==
         y
-    , case // swift3-mode:test:known-bug
+    , case
         (
           a,
           b
