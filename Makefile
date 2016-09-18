@@ -1,11 +1,12 @@
 CASK ?= cask
 EMACS ?= emacs
 VERSION := $(shell EMACS=$(EMACS) $(CASK) version)
+PKG_DIR := $(shell EMACS=$(EMACS) $(CASK) package-directory)
 
 SRC = $(wildcard *.el)
 PACKAGE = dist/swift3-mode-$(VERSION).tar
 
-.PHONY: help all cask-install package install test clean
+.PHONY: help all deps package install test clean
 
 help:
 ## Shows this message.
@@ -22,12 +23,13 @@ help:
 all: package
 ## Builds the package.
 
-cask-install:
-## Installs the dependencies.
+$(PKG_DIR): ## no-doc
 	$(CASK) install
 
-$(PACKAGE): $(SRC) ## no-doc
-	$(MAKE) cask-install
+deps: $(PKG_DIR)
+## Installs the dependencies.
+
+$(PACKAGE): $(SRC) deps ## no-doc
 	rm -rf dist
 	$(CASK) package
 
@@ -45,11 +47,10 @@ clean:
 ## Cleans the dist directory.
 	rm -rf dist
 
-test:
+check: deps
 ## Tests the package.
 	$(CASK) exec $(EMACS) --batch -q \
 	  --eval "(add-to-list 'load-path \""$(shell realpath .)"\")" \
 	  -l swift3-mode.el \
 	  -l test/swift3-mode-test-indent.el \
 	  -f swift3-mode:run-test:indent
-
