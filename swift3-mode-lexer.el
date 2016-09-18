@@ -509,7 +509,10 @@ type `out-of-buffer'"
       (swift3-mode:token 'outside-of-buffer "" (point) (point)))
 
      ;; Implicit semicolon
-     ((and (< pos (line-beginning-position))
+     ((and (< pos
+              (save-excursion
+                (swift3-mode:goto-non-comment-bol)
+                (point)))
            (save-excursion (goto-char pos) (swift3-mode:implicit-semi-p)))
 
       (swift3-mode:token 'implicit-\;
@@ -672,7 +675,10 @@ type `out-of-buffer'."
       (swift3-mode:token 'outside-of-buffer "" (point) (point)))
 
      ;; Implicit semicolon
-     ((and (< (line-end-position) pos)
+     ((and (< (save-excursion
+                (swift3-mode:goto-non-comment-eol)
+                (point))
+              pos)
            (save-excursion (goto-char pos) (swift3-mode:implicit-semi-p)))
       (swift3-mode:token 'implicit-\;
                         (buffer-substring-no-properties (point) pos)
@@ -832,6 +838,31 @@ type `out-of-buffer'."
                           text
                           (point)
                           (+ (point) (length text)))))))))
+
+(defun swift3-mode:goto-non-comment-bol ()
+  "Back to the beginning of line that is not inside a comment."
+  (beginning-of-line)
+  (while (nth 4 (syntax-ppss))
+    ;; The cursor is in a comment. Backs to the beginning of the comment.
+    (goto-char (nth 8 (syntax-ppss)))
+    (beginning-of-line)))
+
+(defun swift3-mode:goto-non-comment-eol ()
+  "Proceed to the end of line that is not inside a comment.
+
+If this line ends with a single-line comment, goto just before the comment."
+  (end-of-line)
+  (while (nth 4 (syntax-ppss))
+    ;; The cursor is in a comment.
+    (if (eq (nth 4 (syntax-ppss)) t)
+        ;; This ia a single-line comment
+        ;; Back to the beginning of the comment.
+        (goto-char (nth 8 (syntax-ppss)))
+      ;; This is a multiline comment
+      ;; Proceed to the end of the comment.
+      (goto-char (nth 8 (syntax-ppss)))
+      (forward-comment 1)
+      (end-of-line))))
 
 (provide 'swift3-mode-lexer)
 

@@ -10,6 +10,6 @@ private
                */ class /*
                          */ Foo /*
                                  */ {
-    aaa() // swift3-mode:test:known-bug
+    aaa()
     bbb()
-} // swift3-mode:test:known-bug
+}
