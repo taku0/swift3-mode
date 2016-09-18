@@ -298,7 +298,7 @@
     ;; Suppress implicit semicolon after declaration starters.
     ((member (swift3-mode:token:text previous-token)
              '("class" "struct" "protocol" "enum" "extension" "func" "typealias"
-               "associatedtype"))
+               "associatedtype" "precedencegroup"))
      nil)
 
     ;; Inserts implicit semicolon before declaration starters.
@@ -312,7 +312,7 @@
     ;; `protocol' is handled by the next rule
     ((member (swift3-mode:token:text next-token)
              '("class" "struct" "enum" "extension" "func" "typealias"
-               "associatedtype"))
+               "associatedtype" "precedencegroup"))
      t)
 
     ;; Inserts implicit semicolon before protocol unless it is followed by <.

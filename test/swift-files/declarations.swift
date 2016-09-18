@@ -372,8 +372,8 @@ postfix
 foo() // swift3-mode:test:known-bug
 
 precedencegroup
-  precedenceGroupName { // swift3-mode:test:known-bug
-    higherThan: // swift3-mode:test:known-bug
+  precedenceGroupName {
+    higherThan:
       lowerGroupName
     lowerThan:
       higherGroupName
@@ -381,5 +381,4 @@ precedencegroup
       false
     associativity:
       left
-} // swift3-mode:test:known-bug
-foo() // swift3-mode:test:known-bug
+}
