@@ -4,11 +4,11 @@
 
 # swift3-mode
 
+This project has been merged into [swift-emacs/swift-mode](https://github.com/swift-emacs/swift-mode). Please use it.
+
 Major-mode for Apple's [Swift programming language](https://developer.apple.com/swift/).
 
 This is a fork of [chrisbarrett/swift-mode](https://github.com/chrisbarrett/swift-mode) with a new indentation engine, supporting Swift 3.
-
-This project will be integrated into [swift-emacs/swift-mode](https://github.com/swift-emacs/swift-mode), that was renamed form chrisbarrett/swift-mode.
 
 ## Installation
 
