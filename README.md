@@ -4,7 +4,7 @@
 
 # swift3-mode
 
-Major-mode for Apple's Swift programming language.
+Major-mode for Apple's [Swift programming language](https://developer.apple.com/swift/).
 
 This is a fork of [chrisbarrett/swift-mode](https://github.com/chrisbarrett/swift-mode) with a new indentation engine, supporting Swift 3.
 
@@ -66,10 +66,10 @@ To install without MELPA, download [latest release](https://github.com/taku0/swi
 - `forward-sexp`
 - `beginning-of-defun` and `end-of-defun`
 - `indent-new-comment-line`
-- Imenu
+- [Imenu](https://www.gnu.org/software/emacs/manual/html_node/emacs/Imenu.html)
 - Running Swift REPL in a buffer (`M-x run-swift`)
 
-This package does not provide REPL and flycheck. Those should be separate packages.
+This package does not provide flycheck. See [flycheck-swift](https://github.com/swift-emacs/flycheck-swift).
 
 ## Limitations
 
@@ -166,7 +166,7 @@ Both are syntactically correct code. We cannot handle this case properly. This i
 
 ## Hacking
 
-To build the package locally, run `make package`.
+To build the package locally, run `make package`. You need [Cask](https://github.com/cask/cask).
 
 To install the built package, run `make install`.
 
@@ -177,8 +177,25 @@ For other commands, run `make help`.
 ## Related projects
 
 - [Official swift-mode.el by Apple](https://github.com/apple/swift/blob/master/utils/swift-mode.el) Seems still in very early stage for now. We cannot contribute to it due to the license incompatibility.
-- [company-sourcekit](https://github.com/nathankot/company-sourcekit) Completion for Swift projects via SourceKit with the help of SourceKitten .
+- [company-sourcekit](https://github.com/nathankot/company-sourcekit) Completion for Swift projects via SourceKit with the help of SourceKitten.
 - [flycheck-swift](https://github.com/swift-emacs/flycheck-swift) Flycheck extensions for Swift.
+
+## Acknowledgements
+
+The REPL code is based on [js-comint](http://js-comint-el.sourceforge.net/).
+
+Thanks to the following original developer and users for their contributions:
+
+- [@chrisbarrett](https://github.com/chrisbarrett) (Chris Barrett)
+- [@ap4y](https://github.com/ap4y) (Arthur Evstifeev)
+- [@bbatsov](https://github.com/bbatsov) (Bozhidar Batsov)
+- [@ckruse](https://github.com/ckruse) (Christian Kruse)
+- [@syohex](https://github.com/syohex) (Syohei Yoshida)
+- [@uk-ar](https://github.com/uk-ar) (Yuuki Arisawa)
+
+You can find a [full list of those people here](https://github.com/swift-emacs/swift-mode/graphs/contributors).
+
+Thanks to [@purcell](https://github.com/purcell) (Steve Purcell) for advices on the code and arrangement for merging `swift3-mode` and `swift-mode`.
 
 ## License
 
