@@ -7,7 +7,7 @@
 ;;       Bozhidar Batsov <bozhidar@batsov.com>
 ;;       Arthur Evstifeev <lod@pisem.net>
 ;;
-;; Version: 2.1
+;; Version: 2.1.1
 ;; Package-Requires: ((emacs "24.4"))
 ;; Keywords: languages swift
 ;; URL: https://github.com/taku0/swift3-mode
@@ -147,7 +147,8 @@
   (setq-local imenu-generic-expression swift3-mode:imenu-generic-expression)
 
   (setq-local beginning-of-defun-function #'swift3-mode:beginning-of-defun)
-  (setq-local end-of-defun-function #'swift3-mode:end-of-defun))
+  (setq-local end-of-defun-function #'swift3-mode:end-of-defun)
+  (message "swift3-mode has been merged into swift-mode. Please uninstall swift3-mode and install swift-mode."))
 
 ;;;###autoload (add-to-list 'auto-mode-alist '("\\.swift\\'" . swift3-mode))
 

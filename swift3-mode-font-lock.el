@@ -7,7 +7,7 @@
 ;;       Bozhidar Batsov <bozhidar@batsov.com>
 ;;       Arthur Evstifeev <lod@pisem.net>
 ;;
-;; Version: 2.1
+;; Version: 2.1.1
 ;; Package-Requires: ((emacs "24.4"))
 ;; Keywords: languages swift
 
