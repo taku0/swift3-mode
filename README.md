@@ -170,7 +170,7 @@ To build the package locally, run `make package`.
 
 To install the built package, run `make install`.
 
-To run tests, run `make test`.
+To run tests, run `make check`.
 
 For other commands, run `make help`.
 
