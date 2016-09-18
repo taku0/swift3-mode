@@ -23,3 +23,13 @@
          * aa
          */
 }
+
+@Annotation(aaa)
+private
+  /* */ final /*
+               */ class /*
+                         */ Foo /*
+                                 */ {
+    aaa()
+    bbb()
+}
