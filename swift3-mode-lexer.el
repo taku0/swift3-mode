@@ -448,7 +448,8 @@ That is supertype declaration or type declaration of let or var."
        (end (swift3-mode:token:end token))
        (has-preceding-space (or
                              (= start (point-min))
-                             (memq (char-syntax (char-before start)) '(?  ?>))))
+                             (memq (char-syntax (char-before start)) '(?  ?>))
+                             (nth 4 (save-excursion (syntax-ppss (1- start))))))
        (has-following-space (or
                              (= end (point-max))
                              (memq (char-syntax (char-after end)) '(?  ?<))

@@ -518,7 +518,7 @@ let x =
     c
   )
 
-let x = foo.
+let x = foo
   .bar(a:
          aaa,
        b:

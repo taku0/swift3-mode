@@ -40,11 +40,10 @@ let x = 1 +// abc
 // Comments behave like whitespaces
 // https://github.com/apple/swift-evolution/blob/master/proposals/0037-clarify-comments-and-operators.md
 let x = 1
-/*a*/+++foo() // swift3-mode:test:known-bug
+/*a*/+++foo()
 
 let x = 1
-  /*a*/+++ foo() // swift3-mode:test:known-bug
-foo() // swift3-mode:test:known-bug
+  /*a*/+++ foo()
 
 let x = 1+++//
 foo()
