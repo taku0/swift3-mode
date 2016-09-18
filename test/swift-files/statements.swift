@@ -38,6 +38,14 @@ for
 }
 
 for
+  x
+  in xs
+    .foo() { // swift3-mode:test:known-bug
+    foo()
+    foo()
+}
+
+for
   (
     x,
     y
@@ -45,39 +53,39 @@ for
   in
   xs
     .foo() +++ { z in // swift3-mode:test:known-bug
-      bar() // swift3-mode:test:known-bug
-  } { // swift3-mode:test:known-bug
+        bar()
+    } {
     foo()
     foo()
 }
 
 for
   case
-  (
-    x,
-    y
-  )
+    ( // swift3-mode:test:known-bug
+      x,
+      y
+    )
   in
   xs
     .foo() +++ { z in // swift3-mode:test:known-bug
-      bar() // swift3-mode:test:known-bug
-      bar()
-  } { // swift3-mode:test:known-bug
+        bar()
+        bar()
+    } {
     foo()
     foo()
 }
 
 for case
-    ( // swift3-mode:test:known-bug
-      x,
-      y
-    )
+      ( // swift3-mode:test:known-bug
+        x,
+        y
+      )
     in
     xs
       .foo() +++ { z in // swift3-mode:test:known-bug
-        bar() // swift3-mode:test:known-bug
-        bar()
-    } { // swift3-mode:test:known-bug
+          bar()
+          bar()
+      } {
     foo()
     foo()
 }
@@ -114,9 +122,10 @@ for x as
 for x
     in
     xs
-      where
-        aaa
-          .bbb(x) {
+      .foo // swift3-mode:test:known-bug
+    where // swift3-mode:test:known-bug
+      aaa
+        .bbb(x) {
     foo()
     foo()
 }
@@ -134,7 +143,7 @@ for x
     in
     xs
       where aaa
-              .bbb(x) {
+        .bbb(x) { // swift3-mode:test:known-bug
     foo()
     foo()
 }
@@ -142,7 +151,7 @@ for x
 for x
     in
     xs where aaa
-               .bbb(x) {
+      .bbb(x) { // swift3-mode:test:known-bug
     foo()
     foo()
 }
@@ -251,16 +260,16 @@ repeat {
     foo()
     foo()
 } while foo
-          .bar()
-          .baz()
+  .bar() // swift3-mode:test:known-bug
+  .baz()
 
 repeat {
     foo()
     foo()
 } while
   foo
-    .bar()
-    .baz()
+  .bar() // swift3-mode:test:known-bug
+  .baz()
 
 repeat {
     foo()
@@ -268,17 +277,16 @@ repeat {
 }
   while
   foo
-    .bar()
-    .baz()
+  .bar() // swift3-mode:test:known-bug
+  .baz()
 
 repeat {
     foo()
     foo()
 }
-  while
-  foo
-    .bar()
-    .baz()
+  while foo
+  .bar() // swift3-mode:test:known-bug
+  .baz()
 
 // If statement
 
@@ -324,16 +332,34 @@ if foo() {
     foo()
     foo()
     foo()
+} else if foo() {
+    foo()
+    foo()
+    foo()
 } else if foo
             .bar()
-            .baz() {
+            .baz() +++ { x in
+                return x
+            },
+          foo
+            .bar()
+            .baz() +++ { x in
+                return x
+            } {
     foo()
     foo()
     foo()
 } else if
   foo
     .bar()
-    .baz() {
+    .baz() +++ { x in
+        return x
+    },
+  foo
+    .bar()
+    .baz() +++ { x in
+        return x
+    } {
     foo()
     foo()
     foo()
@@ -417,8 +443,8 @@ guard
       b
     )
     =
-    ab else { // swift3-mode:test:known-bug
-    foo()
+    ab else {
+    foo() // swift3-mode:test:known-bug
     foo()
 } // swift3-mode:test:known-bug
 
@@ -541,19 +567,19 @@ default:
 switch foo {
 case let
        .P(x) // swift3-mode:test:known-bug
-       where
-         foo
-           .bar(),
+         where // swift3-mode:test:known-bug
+           foo
+             .bar(),
      let
        .Q(x)
-       where
-         foo
-           .bar(),
+         where // swift3-mode:test:known-bug
+           foo
+             .bar(),
      let
        .R(x)
-       where
-         foo
-           .bar():
+         where // swift3-mode:test:known-bug
+           foo
+             .bar():
     foo()
     foo()
 default:
@@ -565,19 +591,19 @@ switch foo {
 case
   let
     .P(x) // swift3-mode:test:known-bug
-    where
-      foo
-        .bar(),
+      where // swift3-mode:test:known-bug
+        foo
+          .bar(),
   let
     .Q(x)
-    where
-      foo
-        .bar(),
+      where // swift3-mode:test:known-bug
+        foo
+          .bar(),
   let
     .R(x)
-    where
-      foo
-        .bar():
+      where // swift3-mode:test:known-bug
+        foo
+          .bar():
     foo()
     foo()
 default:
@@ -589,21 +615,28 @@ switch foo {
 case
   let Foo
     .P(x) // swift3-mode:test:known-bug
-    where
-      foo
-        .bar(),
+      where // swift3-mode:test:known-bug
+        foo
+          .bar(),
   let Foo
     .Q(x)
-    where
-      foo
-        .bar(),
+      where // swift3-mode:test:known-bug
+        foo
+          .bar(),
   let Foo
     .R(x)
-    where
-      foo
-        .bar():
+      where // swift3-mode:test:known-bug
+        foo
+          .bar():
     foo()
     foo()
+case
+  Foo
+    .P, // swift3-mode:test:known-bug
+  Foo
+    .Q,
+  Foo
+    .R:
 default:
     foo()
     foo()
@@ -611,23 +644,24 @@ default:
 
 switch foo {
 case
+  let
+    Foo // swift3-mode:test:known-bug
+    .P(x)
+      where // swift3-mode:test:known-bug
+        foo
+          .bar(),
   let
     Foo
-    .P(x) // swift3-mode:test:known-bug
-    where
-      foo
-        .bar(),
+    .Q(x)
+      where // swift3-mode:test:known-bug
+        foo
+          .bar(),
   let
     Foo
-    .Q(x)
-    where
-      foo
-        .bar(),
-  let Foo
     .R(x)
-    where
-      foo
-        .bar():
+      where // swift3-mode:test:known-bug
+        foo
+          .bar():
     foo()
     foo()
 default:
@@ -639,20 +673,20 @@ switch foo {
 case
   is
     Foo // swift3-mode:test:known-bug
-    where
-      foo
-        .bar(),
+      where // swift3-mode:test:known-bug
+        foo
+          .bar(),
   is
     Foo
-    where
-      foo
-        .bar(),
+      where // swift3-mode:test:known-bug
+        foo
+          .bar(),
   let Foo
     .Bar
     .Baz
-    where
-      foo
-        .bar():
+      where // swift3-mode:test:known-bug
+        foo
+          .bar():
     foo()
     foo()
 default:
@@ -685,16 +719,16 @@ foo:
 
 foo:
   if
-    foo // swift3-mode:test:known-bug
-      .bar == baz {
+  foo
+    .bar == baz {
 }
 
 
 foo:
   for
-    x // swift3-mode:test:known-bug
-    in
-    xs {
+  x
+  in
+  xs {
     foo()
     foo()
 }
@@ -733,18 +767,18 @@ defer {
 
 do {
 } catch Foo
-          .Bar(x) // swift3-mode:test:known-bug
-          where
-            foo()
-              .bar() {
+  .Bar(x)
+    where // swift3-mode:test:known-bug
+      foo()
+        .bar() {
     foo()
     foo()
 } catch
-    Foo
-      .Bar(x)
-      where
-        foo()
-          .bar() {
+  Foo // swift3-mode:test:known-bug
+  .Bar(x)
+    where
+      foo()
+        .bar() {
     foo()
     foo()
 } catch
