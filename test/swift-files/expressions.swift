@@ -115,9 +115,8 @@ let foo = #file
   +++ #function
 
 if
-  #file == a { // swift3-mode:test:known-bug
-} // swift3-mode:test:known-bug
-foo() // swift3-mode:test:known-bug
+  #file == a {
+}
 
 // Array literal
 

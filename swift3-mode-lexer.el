@@ -195,9 +195,14 @@
     ;; #if
     ;;   true
     ;; #end if
-    ((or
-      (string-prefix-p "#" (swift3-mode:token:text previous-token))
-      (string-prefix-p "#" (swift3-mode:token:text next-token)))
+    ((and
+      (or
+       (string-prefix-p "#" (swift3-mode:token:text previous-token))
+       (string-prefix-p "#" (swift3-mode:token:text next-token)))
+      (not (member (swift3-mode:token:text previous-token)
+                   '("#file" "#line" "column" "#function")))
+      (not (member (swift3-mode:token:text next-token)
+                   '("#file" "#line" "column" "#function"))))
      t)
 
     ;; Suppress implicit semicolon after modifiers.
