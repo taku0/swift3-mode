@@ -7,20 +7,20 @@
 // Backquoted identifier must behave like normal identifier
 
 enum `switch` {
-  case 1 // swift3-mode:test:known-bug
+    case 1
 }
 
 do {
 } catch `case`
-          where a // swift3-mode:test:known-bug
+          where a
 
 
 let foo = `var`
   .then {
-  } // swift3-mode:test:known-bug
+  }
 
 let x = `where` +
-  a // swift3-mode:test:known-bug
+  a
 
 
 // Keywords after dot must behave like normal identifier

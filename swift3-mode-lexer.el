@@ -609,8 +609,8 @@ type `out-of-buffer'"
       (swift3-mode:fix-operator-type
        (swift3-mode:token nil text start end))))
 
-   ;; String
-   ((eq (char-after) ?\")
+   ;; String and backquoted identifer
+   ((memq (char-after) '(?\" ?`))
     (let ((pos-after-comment (point)))
       (goto-char (scan-sexps (point) 1))
       (swift3-mode:token
@@ -790,8 +790,8 @@ type `out-of-buffer'."
         (swift3-mode:fix-operator-type
          (swift3-mode:token nil text start end)))))
 
-   ;; String
-   ((eq (char-before) ?\")
+   ;; String and backquoted identifer
+   ((memq (char-before) '(?\" ?`))
     (let ((pos-before-comment (point)))
       (goto-char (scan-sexps (point) -1))
       (swift3-mode:token
