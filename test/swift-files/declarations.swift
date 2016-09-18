@@ -125,7 +125,7 @@ class Foo {
         @A
         mutating
           set
-          it {
+          (it) {
             foo()
             foo(it)
         }
@@ -153,37 +153,32 @@ class Foo {
           // This is bad, but cannot decide indentation without looking forward
           // tokens.
           @A
-          willSet
-            a { // swift3-mode:test:known-bug
-              foo() // swift3-mode:test:known-bug
+          willSet(a) {
               foo()
-          } // swift3-mode:test:known-bug
+              foo()
+          }
 
-          @A // swift3-mode:test:known-bug
-          didSet
-            a { // swift3-mode:test:known-bug
-              foo() // swift3-mode:test:known-bug
+          @A
+          didSet(a) {
               foo()
-          } // swift3-mode:test:known-bug
+              foo()
+          }
       } // This is bad
-
 
     internal var x
       :
       (Int, Int) {
         @A
-        willSet
-          a { // swift3-mode:test:known-bug
-            foo() // swift3-mode:test:known-bug
+        willSet(a) {
             foo()
-        } // swift3-mode:test:known-bug
+            foo()
+        }
 
-        @A // swift3-mode:test:known-bug
-        didSet
-          a { // swift3-mode:test:known-bug
-            foo() // swift3-mode:test:known-bug
+        @A
+        didSet(a) {
             foo()
-        } // swift3-mode:test:known-bug
+            foo()
+        }
     }
 }
 

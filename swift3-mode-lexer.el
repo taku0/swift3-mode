@@ -297,7 +297,7 @@
     ;; self . // not insert semicolon here
     ;;   init
     ((member (swift3-mode:token:text previous-token)
-             '("set" "subscript" "init" "deinit"))
+             '("set" "willSet" "didSet" "subscript" "init" "deinit"))
      nil)
 
     ;; Suppress implicit semicolon after declaration starters.
