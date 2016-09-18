@@ -275,8 +275,8 @@
       (equal (swift3-mode:token:text next-token) "else"))
      t)
 
-    ;; Inserts implicit semicolon after attributes.
-    ((string-prefix-p "@" (swift3-mode:token:text previous-token)) t)
+    ;; Supress implicit semicolon after attributes.
+    ((string-prefix-p "@" (swift3-mode:token:text previous-token)) nil)
 
     ;; Inserts implicit semicolon before keywords that behave like method
     ;; names.

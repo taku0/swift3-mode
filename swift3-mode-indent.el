@@ -503,6 +503,32 @@
        swift3-mode:statement-parent-tokens
        swift3-mode:multiline-statement-offset))
 
+     ;; After attributes at the beginning of a statement, without arguments
+     ((and
+       (string-prefix-p "@" previous-text)
+       (memq (save-excursion
+               (goto-char (swift3-mode:token:start previous-token))
+               (swift3-mode:token:type (swift3-mode:backward-token)))
+             swift3-mode:statement-parent-tokens))
+      ;; Aligns with the attribute.
+      (goto-char (swift3-mode:token:start previous-token))
+      (swift3-mode:align-with-next-token (swift3-mode:backward-token)))
+
+     ;; After attributes at the beginning of a statement, with arguments
+     ((and
+       (eq previous-type '\))
+       (save-excursion
+         (backward-list)
+         (and
+          (string-prefix-p
+           "@"
+           (swift3-mode:token:text (swift3-mode:backward-token)))
+          (memq  (swift3-mode:token:type (swift3-mode:backward-token))
+                 swift3-mode:statement-parent-tokens))))
+      (backward-list)
+      (swift3-mode:backward-token)
+      (swift3-mode:align-with-next-token (swift3-mode:backward-token)))
+
      ;; Otherwise, it is continuation of the previous line
      (t
       (goto-char (swift3-mode:token:end previous-token))

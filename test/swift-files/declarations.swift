@@ -234,11 +234,10 @@ func
   foo()
   ->
   @A
-  B { // swift3-mode:test:known-bug
-    foo() // swift3-mode:test:known-bug
+  B {
     foo()
-} // swift3-mode:test:known-bug
-foo() // swift3-mode:test:known-bug
+    foo()
+}
 
 // Enumeration declarations
 

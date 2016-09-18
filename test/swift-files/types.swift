@@ -47,44 +47,39 @@ let foo: @A A
   = abc
 
 let foo: @A
-  A = abc // swift3-mode:test:known-bug
-foo() // swift3-mode:test:known-bug
+  A = abc
 
 let foo:
   @A
-  A = abc // swift3-mode:test:known-bug
-foo() // swift3-mode:test:known-bug
+  A = abc
 
 let foo
   :@A
-  A = abc // swift3-mode:test:known-bug
-foo() // swift3-mode:test:known-bug
+  A = abc
 
 class Foo:
   @A
-  A, // swift3-mode:test:known-bug
+  A,
   B { 
-} // swift3-mode:test:known-bug
-foo() // swift3-mode:test:known-bug
+}
 
 class Foo
   : @A
     A, // swift3-mode:test:known-bug
     B {
-} // swift3-mode:test:known-bug
-foo() // swift3-mode:test:known-bug
+}
 
 class Foo: @A
            A // swift3-mode:test:known-bug
-         , B // swift3-mode:test:known-bug
-{ // swift3-mode:test:known-bug
+         , B
+{
 }
 
 class Foo
   : @A
     A // swift3-mode:test:known-bug
-  , B // swift3-mode:test:known-bug
-{ // swift3-mode:test:known-bug
+  , B
+{
 }
 
 // Member types
